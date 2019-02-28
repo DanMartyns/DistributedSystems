@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package assignment1;
+package SharedRegions;
 
 /**
  *
  * @author danielmartins
  */
-public class Manager extends Thread {
+public class Lounge {
     
 }

@@ -3,12 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package assignment1;
+package MainProgram.InterveningEntities;
 
 /**
  *
  * @author danielmartins
  */
-public class Customer {
+public class Manager extends Thread {
     
+    /* Means the Life Cycle of the Manager */    
+    @Override
+    public void run(){
+        
+    }
 }
