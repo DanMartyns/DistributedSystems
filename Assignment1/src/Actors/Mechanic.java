@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package assignment1.Actors;
+package Actors;
 
-import assignment1.Locations.Lounge;
-import assignment1.Locations.Park;
-import assignment1.Locations.RepairArea;
+import Locations.Lounge;
+import Locations.Park;
+import Locations.RepairArea;
 
 /**
  * @author giselapinto

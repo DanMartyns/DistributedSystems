@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package assignment1.Actors;
+package Actors;
 
-import assignment1.Locations.Lounge;
-import assignment1.Locations.RepairArea;
-import assignment1.Locations.SupplierSite;
-import static assignment1.ProblemInformation.Constants.ALERTING_CUSTOMER;
-import static assignment1.ProblemInformation.Constants.ATENDING_CUSTOMER;
-import static assignment1.ProblemInformation.Constants.GETTING_NEW_PARTS;
+import Locations.Lounge;
+import Locations.RepairArea;
+import Locations.SupplierSite;
+import static ProblemInformation.Constants.ALERTING_CUSTOMER;
+import static ProblemInformation.Constants.ATENDING_CUSTOMER;
+import static ProblemInformation.Constants.GETTING_NEW_PARTS;
 
 /**
  * @author giselapinto
