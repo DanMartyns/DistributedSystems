@@ -17,45 +17,135 @@ import static ProblemInformation.Constants.GETTING_NEW_PARTS;
  * @author danielmartins
  */
 public class Manager extends Thread {
+    
+    public enum State { 
+        /**
+         * Checking what to do.
+         */
+        CHECKING_WHAT_TO_DO ("Check"),
+        
+        /**
+         * Attending customer.
+         */
+        ATTENDING_CUSTOMER ("Attend"),
+        
+        /**
+         * Posting Job.
+         */
+        POSTING_JOB ("Post"),
+        
+        /**
+         * Supervising the race.
+         */
+        ALERTING_COSTUMER ("Alert"),
+        
+        /**
+         * Replenish Stock.
+         */
+        REPLENISH_STOCK ("Replen"),
+        
+        /**
+         * Getting new parts.
+         */
+        GETTING_NEW_PARTS ("Get");
+        
+        private final String description;
+        
+        private State(String description){
+            this.description = description;
+        }
+        
+        @Override
+        public String toString(){
+            return this.description;
+        }
+    }
+    /**
+     * Identifier of the Manager.
+     */
     private int id;
     
-    private int stateOfService;
+    /**
+     * Current manager state.
+     */
+    private State state;
     
+    /**
+     * State of the Service.
+     */    
+    private int stateOfService;
+    /**
+     * Instance of the Lounge.
+     */
     private Lounge lounge;
     
+    /**
+     * Instance of the Supplier Site.
+     */    
     private SupplierSite supplierSite;
     
+    /**
+     * Instance of the Repair Area.
+     */
     private RepairArea repairArea;
     
+    
+    /**
+     * Manager constructor
+     * 
+     * @param id identifier of the manager
+     * @param lounge instance of the lounge
+     * @param supplierSite instance of the supplier site
+     * @param repairArea instance of the repair area
+     */    
     public Manager(int id, Lounge lounge, SupplierSite supplierSite, RepairArea repairArea) {
+        this.state = State.CHECKING_WHAT_TO_DO;
         this.id = id;
         this.lounge = lounge;
         this.supplierSite = supplierSite;
         this.repairArea = repairArea;
         
     }
-    
-    
+     
     @Override
     public void run(){
         while(lounge.getNextTask()){
+            this.state = State.CHECKING_WHAT_TO_DO;
             switch(lounge.appraiseSit()){
-                case ATENDING_CUSTOMER: 
+                case ATENDING_CUSTOMER:
+                    this.state = State.ATTENDING_CUSTOMER;
                     lounge.talkToCustomer();
                     lounge.handCarKey();
-                    stateOfService = repairArea.registerService();
+                    this.stateOfService = repairArea.registerService(); //Updated Status : Posting Job
                     break;
                 case ALERTING_CUSTOMER:
+                    this.state = State.ALERTING_COSTUMER;
                     lounge.phoneCustomer();
                     lounge.getNextTask();
                     lounge.talkToCustomer();
                     lounge.receivePayment();
                     break;
                 case GETTING_NEW_PARTS:
+                    this.state = State.GETTING_NEW_PARTS;
                     supplierSite.goToSupplier();
-                    supplierSite.storePart();
+                    supplierSite.storePart(); //Updated Status : Replenish Stock
                     break;
             }
         }
+    }
+    /**
+     * Get the Manager state
+     * 
+     * @return manager state
+     */
+    public State getManagerState(){
+        return this.state;
+    }
+    /**
+     * Set the manager state
+     * @param state manager state
+     */
+    public void setManagerState(State state){
+        this.state = state;
     }
 }

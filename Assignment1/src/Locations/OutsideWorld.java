@@ -13,7 +13,7 @@ public class OutsideWorld {
      // lista com os costumers no outside
 
 
-    public synchronized void decideOnRepair() {
+    public synchronized boolean decideOnRepair() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

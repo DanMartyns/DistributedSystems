@@ -5,6 +5,10 @@
  */
 package Locations;
 
+import Actors.Mechanic;
+import Actors.Mechanic.State;
+import Actors.Manager;
+
 /**
  *
  * @author giselapinto
@@ -12,30 +16,61 @@ package Locations;
 public class RepairArea {
 
     public synchronized int registerService() {
+        Manager manager = ((Manager)Thread.currentThread());
+        manager.setManagerState(Manager.State.POSTING_JOB);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public synchronized void startRepairProcedure() {
+        Mechanic mechanic = ((Mechanic)Thread.currentThread());
+        mechanic.setManagerState(Mechanic.State.FIXING_CAR);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /*
+    * Getting new pieces
+    */
     public synchronized void getRequiredPart() {
+        Mechanic mechanic = ((Mechanic)Thread.currentThread());
+        mechanic.setManagerState(Mechanic.State.CHECKING_STOCK);   
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /*
+    * Checking the stock repetily
+    */
     public synchronized void partAvailable() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    /*
+    * Back to fix
+    */
     public synchronized void resumeRepairProcedure() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /*
+    * Process the fix
+    */
     public synchronized void fixIt() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /*
+    * Notify the repair is concluded
+    */
     public synchronized void repairConcluded() {
+        Mechanic mechanic = ((Mechanic)Thread.currentThread());
+        mechanic.setManagerState(Mechanic.State.ALERTING_MANAGER);  
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    /*
+    * Checking if have enough pieces
+    */
+    public boolean pieces() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+
 }

@@ -5,6 +5,9 @@
  */
 package Locations;
 
+import Actors.Manager;
+import Actors.Manager.State;
+
 /**
  *
  * @author giselapinto
@@ -12,6 +15,8 @@ package Locations;
 public class SupplierSite {
 
     public synchronized void goToSupplier() {
+        Manager manager = ((Manager)Thread.currentThread());
+        manager.setManagerState(State.REPLENISH_STOCK);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
