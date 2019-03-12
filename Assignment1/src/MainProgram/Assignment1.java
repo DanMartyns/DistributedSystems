@@ -14,33 +14,41 @@ import Locations.RepairArea;
 import Locations.SupplierSite;
 import static ProblemInformation.Constants.NUM_CUSTOMERS;
 import static ProblemInformation.Constants.NUM_MECHANICS;
+import genclass.GenericIO;
 
 import java.util.Random;
 /**
- *
+ * Main program class:
+ * Main function launches all threads: a manager, mechanics and costumers.
+ * It uses the Constants class to get the simulation parameters.
+ * The shared regions are also initialized, as well the logger (not yet) and its parameters.
+ * 
  * @author danielmartins
  */
 public class Assignment1 {
 
     /**
-     * @param args the command line arguments
-     */
+     *  Main method.
+     *
+     *  @param args runtime arguments
+    */
     public static void main(String[] args) {
         
         boolean replaceCar = false;
         int wantsReplaceCar = 0;
         
-        // initialize actors threads and locations
-        Customer[] thread_customer = new Customer[NUM_CUSTOMERS];
-        Manager thread_manager;
-        Mechanic[] thread_mechanic = new Mechanic[NUM_MECHANICS];
-        
-    
+        /**
+         * Problem Initialization.
+         */
         Lounge lounge = new Lounge();
         Park park = new Park();
         OutsideWorld outsideWorld = new OutsideWorld();
         RepairArea repairArea = new RepairArea();
         SupplierSite supplierSite = new SupplierSite();
+        
+        Manager thread_manager;
+        Mechanic[] thread_mechanic = new Mechanic[NUM_MECHANICS];
+        Customer[] thread_customer = new Customer[NUM_CUSTOMERS];
         
         //random to choose if customer wants a replacement car or not
         Random rand_replace = new Random();
@@ -53,7 +61,10 @@ public class Assignment1 {
         else {
             replaceCar = true;
         }
-            
+        
+        /** 
+         * Start of Simulation.
+         */    
        
         for(int i = 0; i<NUM_CUSTOMERS; i++)
         {
@@ -74,6 +85,38 @@ public class Assignment1 {
             thread_mechanic[i] = new Mechanic(i, lounge, repairArea, park);
             //lunch run thread from mechainc
             thread_mechanic[i].start();
+        }
+        
+        /**
+         * Wait for the end of simulation.
+         */
+        
+        for (Customer customer : thread_customer) {
+            try{
+                customer.join();
+            }
+            catch(InterruptedException e){
+                GenericIO.writeString("Main Program - One thread of Customer was interrupted.");
+                System.exit(1);
+            }
+        }
+        
+        for (Mechanic mechanic : thread_mechanic) {
+            try{
+                mechanic.join();
+            }
+            catch(InterruptedException e){
+                GenericIO.writeString("Main Program - One thread of Mechanic was interrupted.");
+                System.exit(1);
+            }
+        }
+        
+        try{
+            thread_manager.join();
+        }
+        catch(InterruptedException e){
+            GenericIO.writeString("Main Program - One thread of Manager  was interrupted.");
+            System.exit(1);
         }
         
     }

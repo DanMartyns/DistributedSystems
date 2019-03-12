@@ -133,7 +133,7 @@ public class Customer extends Thread {
             outsideWorld.backToWorkByCar();
         }
     }
-        /**
+    /**
      * Get the Manager state
      * 
      * @return manager state
