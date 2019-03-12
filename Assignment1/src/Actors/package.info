@@ -1,0 +1,6 @@
+/**
+ * Group of the actors in the problem: Manager, Mechanics and Customers.
+ * Each one of them is a separate class. Each entity has a life-cycle, and an
+ * internal state that will update itself over time. 
+ */
+package Actors;

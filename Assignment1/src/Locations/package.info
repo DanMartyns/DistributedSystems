@@ -1,0 +1,8 @@
+/**
+ * This package contains the five shared regions used in the program:
+ * Lounge, Outside World, Park, RepairArea and SupplierSite.
+ * All these classes have functions to be used by multiple threads:
+ * the manager, the costumers and the mechanics.
+ * Some functions will also change the state of the entities and call the logger.
+ */
+package Locations;

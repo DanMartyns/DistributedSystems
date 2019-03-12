@@ -106,7 +106,9 @@ public class Manager extends Thread {
         this.repairArea = repairArea;
         
     }
-     
+    /**
+     * Implements the life cycle of the broker.
+     */ 
     @Override
     public void run(){
         while(lounge.getNextTask()){

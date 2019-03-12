@@ -115,7 +115,7 @@ public class Assignment1 {
             thread_manager.join();
         }
         catch(InterruptedException e){
-            GenericIO.writeString("Main Program - One thread of Manager  was interrupted.");
+            GenericIO.writeString("Main Program - One thread of Manager was interrupted.");
             System.exit(1);
         }
         
