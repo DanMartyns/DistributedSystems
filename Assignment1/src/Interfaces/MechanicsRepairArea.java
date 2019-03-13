@@ -9,14 +9,7 @@ package Interfaces;
  *
  * @author giselapinto
  */
-public interface MechanicsInterface {
-    
-    /**
-     * Mechanics waits for service, reading the paper
-     * @return if mechanics is reading or not the paper
-     * (Class Lounge)
-     */
-    boolean readThePaper();
+public interface MechanicsRepairArea {
     
     /**
      * when mechanics have a service to do, he starts the repair procedure
@@ -24,24 +17,13 @@ public interface MechanicsInterface {
      */
     void startRepairProcedure();
     
-    /**
-     * Mechanics get the car to repair
-     * (Class Park)
-     */
-    void getVehicle();
-    
+ 
     /**
      * Mechanics Fix the car
      * (Class RepairArea)
      */
     void fixIt();
-    
-    /**
-     * Mechanics finish de repair procedure and let the car in the park
-     * (Class Park)
-     */
-    void returnVehicle();
-    
+ 
     /**
      * If mechanics need a part, he goes to his supplier to get the required part
      * (Class RepairArea)
