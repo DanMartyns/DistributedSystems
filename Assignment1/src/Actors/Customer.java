@@ -111,12 +111,12 @@ public class Customer extends Thread {
         int keyForReplaceCar;
         
         while(outsideWorld.decideOnRepair()){
-            park.goToRepairShop();
-            lounge.queueIn();
+            park.goToRepairShop(); //Change State to PARK
+            lounge.queueIn(); //Change State to RECEPTION
             lounge.talkWithManager();
 
             if(wantsReplaceCar){
-                keyForReplaceCar = lounge.collectKey();
+                keyForReplaceCar = lounge.collectKey(); //Change State to WAITING_FOR_REPLACE_CAR
                 park.findCar(keyForReplaceCar);
                 outsideWorld.backToWorkByCar();
                 /*after some time*/

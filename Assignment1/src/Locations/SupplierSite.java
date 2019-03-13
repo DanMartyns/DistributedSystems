@@ -16,11 +16,13 @@ public class SupplierSite {
 
     public synchronized void goToSupplier() {
         Manager manager = ((Manager)Thread.currentThread());
-        manager.setManagerState(State.REPLENISH_STOCK);
+        manager.setManagerState(State.GETTING_NEW_PARTS);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public synchronized void storePart() {
+        Manager manager = ((Manager)Thread.currentThread());
+        manager.setManagerState(Manager.State.REPLENISH_STOCK);        
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

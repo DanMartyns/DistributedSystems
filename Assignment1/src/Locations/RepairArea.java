@@ -6,7 +6,6 @@
 package Locations;
 
 import Actors.Mechanic;
-import Actors.Mechanic.State;
 import Actors.Manager;
 
 /**
@@ -40,12 +39,16 @@ public class RepairArea {
     * Checking the stock repetily
     */
     public synchronized void partAvailable() {
+        Mechanic mechanic = ((Mechanic)Thread.currentThread());
+        mechanic.setManagerState(Mechanic.State.CHECKING_STOCK);          
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     /*
     * Back to fix
     */
     public synchronized void resumeRepairProcedure() {
+        Mechanic mechanic = ((Mechanic)Thread.currentThread());
+        mechanic.setManagerState(Mechanic.State.FIXING_CAR);        
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -53,6 +56,8 @@ public class RepairArea {
     * Process the fix
     */
     public synchronized void fixIt() {
+        Mechanic mechanic = ((Mechanic)Thread.currentThread());
+        mechanic.setManagerState(Mechanic.State.FIXING_CAR);        
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -64,7 +69,12 @@ public class RepairArea {
         mechanic.setManagerState(Mechanic.State.ALERTING_MANAGER);  
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
+    public synchronized void letManagerKnow() {
+        Mechanic mechanic = ((Mechanic)Thread.currentThread());
+        mechanic.setManagerState(Mechanic.State.ALERTING_MANAGER);         
+    }
+    
     /*
     * Checking if have enough pieces
     */
