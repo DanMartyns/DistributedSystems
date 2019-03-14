@@ -8,12 +8,14 @@ package Actors;
 import Locations.Lounge;
 import Locations.OutsideWorld;
 import Locations.Park;
+import java.util.UUID;
 
 /**
  * @author giselapinto
  * @author danielmartins
  */
 public class Customer extends Thread {
+
         public enum State { 
         /**
          * Normal life with car.
@@ -69,8 +71,9 @@ public class Customer extends Thread {
     /**
     * Identifier the car.
     */
-    private int carID;
-   
+    private final Car car;
+    
+    
     /**
     * Park.
     */
@@ -86,21 +89,20 @@ public class Customer extends Thread {
     */ 
     private OutsideWorld outsideWorld;
     
+    
    
     /**
      * Mechanic constructor
      * 
      * @param id identifier of the customer
-     * @param wantsReplaceCar boolean to decide if will replace the car
-     * @param carID identifier of the car
      * @param outsideWorld instance of the outside world
+     * @param park instance of the Park
      * @param lounge instance of the lounge
      */     
-    public Customer(int id, boolean wantsReplaceCar, int carID, OutsideWorld outsideWorld, Park park, Lounge lounge) {
+    public Customer(int id, OutsideWorld outsideWorld, Park park, Lounge lounge) {
         this.id = id;
         this.state = State.NORMAL_LIFE_WITH_CAR;
-        this.wantsReplaceCar = wantsReplaceCar;
-        this.carID = carID;
+        this.car = new Car();
         this.outsideWorld = outsideWorld;
         this.park = park;
         this.lounge = lounge;
@@ -129,10 +131,15 @@ public class Customer extends Thread {
 
             lounge.queueIn();
             lounge.payForTheService();
-            park.collectCar(carID);
+            park.collectCar(car);
             outsideWorld.backToWorkByCar();
         }
     }
+
+    public Car getCar() {
+        return car;
+    }
+
     /**
      * Get the Manager state
      * 
@@ -148,4 +155,5 @@ public class Customer extends Thread {
     public void setManagerState(State state){
         this.state = state;
     }
+    
 }

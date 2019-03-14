@@ -69,7 +69,7 @@ public class Assignment1 {
         for(int i = 0; i<NUM_CUSTOMERS; i++)
         {
             
-            thread_customer[i] = new Customer(i, replaceCar, i, outsideWorld, park, lounge);
+            thread_customer[i] = new Customer(i, replaceCar, outsideWorld, park, lounge);
             //lunch run thread from customer
             thread_customer[i].start();
         }

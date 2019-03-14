@@ -54,5 +54,10 @@ public interface MechanicsRepairArea {
      */
     void repairConcluded();
    
-    
+    /**
+     * Mechanics waits for service, reading the paper
+     * @return if mechanics is reading or not the paper
+     * (Class Lounge)
+     */
+    boolean readThePaper();    
 }

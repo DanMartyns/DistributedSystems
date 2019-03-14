@@ -7,17 +7,19 @@ package Locations;
 
 import Actors.Manager;
 import Actors.Manager.State;
+import Interfaces.ManagerSupplierSite;
 
 /**
  *
  * @author giselapinto
  */
-public class SupplierSite {
+public class SupplierSite implements ManagerSupplierSite {
 
     public synchronized void goToSupplier() {
         Manager manager = ((Manager)Thread.currentThread());
         manager.setManagerState(State.GETTING_NEW_PARTS);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // -> What we need to do HERE ?!? <-
     }
 
     public synchronized void storePart() {

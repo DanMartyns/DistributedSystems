@@ -88,7 +88,7 @@ public class Mechanic extends Thread {
     @Override
     public void run() {
         boolean partsInStock = true;
-        while(!lounge.readThePaper()){
+        while(!repairArea.readThePaper()){
             this.state = State.WAITING_FOR_WORK;
             repairArea.startRepairProcedure();
             park.getVehicle();

@@ -5,6 +5,8 @@
  */
 package Interfaces;
 
+import Actors.Car;
+
 /**
  *
  * @author giselapinto
@@ -15,7 +17,7 @@ public interface MechanicsPark {
     * Mechanics get the car to repair
     * (Class Park)
     */
-    void getVehicle();
+    Car getVehicle();
     
     
     /**

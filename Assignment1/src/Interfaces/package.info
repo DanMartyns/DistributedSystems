@@ -1,0 +1,5 @@
+/**
+ * This package contains the interfaces to access the Shared Regions:
+ * Lounge, Outside World, Park, RepairArea and SupplierSite.
+ s*/
+package Interfaces;

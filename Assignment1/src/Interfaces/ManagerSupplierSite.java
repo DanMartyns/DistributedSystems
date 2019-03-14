@@ -5,18 +5,22 @@
  */
 package Interfaces;
 
+
 /**
  *
- * @author giselapinto
+ * @author danielmartins
  */
-public interface MechanicsLounge {
+public interface ManagerSupplierSite {
     
     /**
-     * Mechanics waits for service, reading the paper
-     * @return if mechanics is reading or not the paper
-     * (Class Lounge)
+     * Replace the pieces (SupplierSite)
      */
-    boolean readThePaper();
+    public void storePart();
+    
+    /**
+     * Go to Supplier (SupplierSite)
+     */
+    public void goToSupplier();
     
     
 }
