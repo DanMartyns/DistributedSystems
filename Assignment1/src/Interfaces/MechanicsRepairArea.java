@@ -33,8 +33,9 @@ public interface MechanicsRepairArea {
     /**
      * Mechanics check if the part is available on his supplier
      * (Class RepairArea)
+     * @return if mechanics has parts with him or not
      */
-    void partAvailable();
+    boolean partAvailable();
     
     /**
      * if he has the part on his supplier he continues to finish repair procedure
@@ -43,21 +44,11 @@ public interface MechanicsRepairArea {
     void resumeRepairProcedure();
     
     /**
-     * if mechanics hasn't the part in his supplier he let manager know that
-     * (Class RepairArea)
-     */
-    void letManagerKnow();
-    
-    /**
-     * Mechanics concluded de repair procedure
-     * (Class RepairArea)
-     */
-    void repairConcluded();
-   
-    /**
      * Mechanics waits for service, reading the paper
      * @return if mechanics is reading or not the paper
      * (Class Lounge)
      */
-    boolean readThePaper();    
+    boolean readThePaper();   
+    
+ 
 }

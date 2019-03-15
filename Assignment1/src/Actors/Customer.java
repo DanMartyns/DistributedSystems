@@ -5,9 +5,10 @@
  */
 package Actors;
 
-import Locations.Lounge;
-import Locations.OutsideWorld;
-import Locations.Park;
+import Interfaces.CustomerLounge;
+import Interfaces.CustomerOutSideWorld;
+import Interfaces.CustomerPark;
+
 import java.util.UUID;
 
 /**
@@ -75,19 +76,19 @@ public class Customer extends Thread {
     
     
     /**
-    * Park.
+    * interface Customer Park.
     */
-    private Park park;
+    private CustomerPark park;
     
     /**
-     * Instance of the Lounge.
+     * Instance of the interface from customer Lounge.
      */
-    private Lounge lounge;
+    private CustomerLounge lounge;
     
     /**
-    * Instance of the Outside World.
+    * Instance of the interface from customer Outside World.
     */ 
-    private OutsideWorld outsideWorld;
+    private CustomerOutSideWorld outsideWorld;
     
     
    
@@ -99,7 +100,7 @@ public class Customer extends Thread {
      * @param park instance of the Park
      * @param lounge instance of the lounge
      */     
-    public Customer(int id, OutsideWorld outsideWorld, Park park, Lounge lounge) {
+    public Customer(int id, CustomerOutSideWorld outsideWorld, CustomerPark park, CustomerLounge lounge) {
         this.id = id;
         this.state = State.NORMAL_LIFE_WITH_CAR;
         this.car = new Car();

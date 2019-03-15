@@ -5,6 +5,9 @@
  */
 package Actors;
 
+import Interfaces.ManagerLounge;
+import Interfaces.ManagerRepairArea;
+import Interfaces.ManagerSupplierSite;
 import Locations.Lounge;
 import Locations.RepairArea;
 import Locations.SupplierSite;
@@ -75,19 +78,19 @@ public class Manager extends Thread {
      */    
     private int stateOfService;
     /**
-     * Instance of the Lounge.
+     * Instance of the manager interface Lounge.
      */
-    private Lounge lounge;
+    private ManagerLounge lounge;
     
     /**
-     * Instance of the Supplier Site.
+     * Instance of the manager interface Supplier Site.
      */    
-    private SupplierSite supplierSite;
+    private ManagerSupplierSite supplierSite;
     
     /**
-     * Instance of the Repair Area.
+     * Instance of the manager interface Repair Area.
      */
-    private RepairArea repairArea;
+    private ManagerRepairArea repairArea;
     
     
     /**
@@ -98,7 +101,7 @@ public class Manager extends Thread {
      * @param supplierSite instance of the supplier site
      * @param repairArea instance of the repair area
      */    
-    public Manager(int id, Lounge lounge, SupplierSite supplierSite, RepairArea repairArea) {
+    public Manager(int id, ManagerLounge lounge, ManagerSupplierSite supplierSite, ManagerRepairArea repairArea) {
         this.state = State.CHECKING_WHAT_TO_DO;
         this.id = id;
         this.lounge = lounge;

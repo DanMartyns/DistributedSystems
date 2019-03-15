@@ -39,7 +39,7 @@ public class OutsideWorld implements CustomerOutSideWorld {
         Customer customer = ((Customer)Thread.currentThread());
         customer.setManagerState(Customer.State.NORMAL_LIFE_WITHOUT_CAR);
         
-        assert customer.withCar() == false;
+        //assert customer.withCar() == false;
         
         try {
             wait();

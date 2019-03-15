@@ -1,5 +1,8 @@
 package Actors;
 
+import Interfaces.MechanicsLounge;
+import Interfaces.MechanicsPark;
+import Interfaces.MechanicsRepairArea;
 import Locations.Lounge;
 import Locations.Park;
 import Locations.RepairArea;
@@ -52,20 +55,22 @@ public class Mechanic extends Thread {
      */
     private State state;
     
+   
     /**
-     * Instance of the Lounge.
-     */
-    private Lounge lounge;
-    
-    /**
-     * Instance of the Repair Area.
+     * Instance of the mechanics interface Repair Area.
      */    
-    private RepairArea repairArea;
+    private MechanicsRepairArea repairArea;
 
     /**
-     * Instance of the Park.
+     * Instance of the mechanics interface Park.
      */
-    private Park park;
+    private MechanicsPark park;
+    
+    
+    /**
+     * Instance of the mechanics interface lounge.
+     */
+    private MechanicsLounge lounge;
     
     /**
      * Mechanic constructor
@@ -75,7 +80,7 @@ public class Mechanic extends Thread {
      * @param repairArea instance of the repair area
      * @param park instance of the park
      */ 
-    public Mechanic(int id, Lounge lounge, RepairArea repairArea, Park park) {
+    public Mechanic(int id, MechanicsLounge lounge, MechanicsRepairArea repairArea, MechanicsPark park) {
         this.state = State.WAITING_FOR_WORK;
         this.id = id;
         this.lounge = lounge;
@@ -95,19 +100,23 @@ public class Mechanic extends Thread {
 
             if(!partsInStock){
                 repairArea.getRequiredPart();
-                repairArea.partAvailable();
-            
-                if (repairArea.pieces()){
+                
+                if (repairArea.partAvailable()){
                     repairArea.resumeRepairProcedure();
                 }
 
                 else {
-                    repairArea.fixIt();
+                    lounge.letManagerKnow();
+                    repairArea.readThePaper();
+                    repairArea.startRepairProcedure();
+                    park.getVehicle();
+                    
 
                 }
             }
+            repairArea.fixIt();
             park.returnVehicle();
-            repairArea.repairConcluded();
+            lounge.repairConcluded();
 
         }   
     }

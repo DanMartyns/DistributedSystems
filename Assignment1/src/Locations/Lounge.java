@@ -7,8 +7,10 @@ package Locations;
 
 import Actors.Customer;
 import Actors.Manager;
+import Actors.Mechanic;
 import Interfaces.CustomerLounge;
 import Interfaces.ManagerLounge;
+import Interfaces.MechanicsLounge;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.logging.Level;
@@ -18,7 +20,7 @@ import java.util.logging.Logger;
  *
  * @author giselapinto
  */
-public class Lounge implements CustomerLounge, ManagerLounge {
+public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
 
     /**
      * Queue's Lounge for Lounge
@@ -157,6 +159,7 @@ public class Lounge implements CustomerLounge, ManagerLounge {
         manager.setManagerState(Manager.State.ALERTING_COSTUMER);        
         notifyAll();
     }
+    
     @Override    
     public synchronized void receivePayment() {
         Manager manager = ((Manager)Thread.currentThread());
@@ -166,6 +169,31 @@ public class Lounge implements CustomerLounge, ManagerLounge {
         } catch (InterruptedException ex) {
             Logger.getLogger(Lounge.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    
+    /*
+    * Let manager know that the mechanics needs more pieces from supplier site
+    */
+    @Override
+    public synchronized void letManagerKnow() {
+        Mechanic mechanic = ((Mechanic)Thread.currentThread());
+        mechanic.setManagerState(Mechanic.State.ALERTING_MANAGER);         
+    }
+    
+    /*
+    * Notify the repair is concluded
+    */
+    @Override
+    public synchronized void repairConcluded() {
+        Mechanic mechanic = ((Mechanic)Thread.currentThread());
+        mechanic.setManagerState(Mechanic.State.ALERTING_MANAGER);  
+        try {
+            Thread.sleep((int) (Math.random() * 10 * 100));
+        } catch (InterruptedException ex) {
+            Logger.getLogger(RepairArea.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        notifyAll();
     }
     
 }

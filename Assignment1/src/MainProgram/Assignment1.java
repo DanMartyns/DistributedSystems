@@ -7,6 +7,15 @@ package MainProgram;
 import Actors.Customer;
 import Actors.Manager;
 import Actors.Mechanic;
+import Interfaces.CustomerLounge;
+import Interfaces.CustomerOutSideWorld;
+import Interfaces.CustomerPark;
+import Interfaces.ManagerLounge;
+import Interfaces.ManagerRepairArea;
+import Interfaces.ManagerSupplierSite;
+import Interfaces.MechanicsLounge;
+import Interfaces.MechanicsPark;
+import Interfaces.MechanicsRepairArea;
 import Locations.Lounge;
 import Locations.OutsideWorld;
 import Locations.Park;
@@ -23,7 +32,7 @@ import java.util.Random;
  * It uses the Constants class to get the simulation parameters.
  * The shared regions are also initialized, as well the logger (not yet) and its parameters.
  * 
- * @author danielmartins
+ * @author danielmartins and giselapinto
  */
 public class Assignment1 {
 
@@ -34,7 +43,7 @@ public class Assignment1 {
     */
     public static void main(String[] args) {
         
-        boolean replaceCar = false;
+        //boolean replaceCar = false;
         int wantsReplaceCar = 0;
         
         /**
@@ -54,13 +63,7 @@ public class Assignment1 {
         Random rand_replace = new Random();
         //if 0-> NO else YES!!
         wantsReplaceCar = rand_replace.nextInt(1);
-        if(wantsReplaceCar==0)
-        {
-            replaceCar = false;
-        }
-        else {
-            replaceCar = true;
-        }
+        
         
         /** 
          * Start of Simulation.
@@ -69,20 +72,20 @@ public class Assignment1 {
         for(int i = 0; i<NUM_CUSTOMERS; i++)
         {
             
-            thread_customer[i] = new Customer(i, replaceCar, outsideWorld, park, lounge);
+            thread_customer[i] = new Customer(i, (CustomerOutSideWorld) outsideWorld, (CustomerPark) park, (CustomerLounge) lounge);
             //lunch run thread from customer
             thread_customer[i].start();
         }
         
         
-        thread_manager = new Manager(1, lounge, supplierSite, repairArea);
+        thread_manager = new Manager(1, (ManagerLounge) lounge, (ManagerSupplierSite) supplierSite, (ManagerRepairArea) repairArea);
         //lunch run thread from manager
         thread_manager.start();
         
         
         for(int i=0; i<NUM_MECHANICS; i++)
         {
-            thread_mechanic[i] = new Mechanic(i, lounge, repairArea, park);
+            thread_mechanic[i] = new Mechanic(i, (MechanicsLounge) lounge, (MechanicsRepairArea) repairArea, (MechanicsPark) park);
             //lunch run thread from mechainc
             thread_mechanic[i].start();
         }
