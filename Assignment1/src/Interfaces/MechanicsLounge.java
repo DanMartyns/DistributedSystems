@@ -19,6 +19,6 @@ public interface MechanicsLounge {
     /**
     * Notify the repair is concluded
     */
-    void repairConcluded();
+    void repairConcluded(int currentCar);
     
 }

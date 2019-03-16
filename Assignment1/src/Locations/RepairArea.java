@@ -5,23 +5,17 @@
  */
 package Locations;
 
-import Actors.Car;
 import Actors.Mechanic;
 import Actors.Manager;
 import Interfaces.ManagerRepairArea;
 import Interfaces.MechanicsRepairArea;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author giselapinto
  */
 public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
-
-    List<Car> repairCars = new ArrayList<>();
+    
     /**
      *
      * @return
@@ -29,7 +23,7 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
     @Override
     public synchronized boolean readThePaper() {
         Mechanic mechanic = ((Mechanic)Thread.currentThread());
-        mechanic.setManagerState(Mechanic.State.WAITING_FOR_WORK);         
+        mechanic.setMechanicState(Mechanic.State.WAITING_FOR_WORK);         
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -43,7 +37,7 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
     @Override
     public synchronized void startRepairProcedure() {
         Mechanic mechanic = ((Mechanic)Thread.currentThread());
-        mechanic.setManagerState(Mechanic.State.FIXING_CAR);
+        mechanic.setMechanicState(Mechanic.State.FIXING_CAR);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -53,7 +47,7 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
     @Override
     public synchronized void getRequiredPart() {
         Mechanic mechanic = ((Mechanic)Thread.currentThread());
-        mechanic.setManagerState(Mechanic.State.CHECKING_STOCK);   
+        mechanic.setMechanicState(Mechanic.State.CHECKING_STOCK);   
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -64,7 +58,7 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
     @Override
     public synchronized boolean partAvailable() {
         Mechanic mechanic = ((Mechanic)Thread.currentThread());
-        mechanic.setManagerState(Mechanic.State.CHECKING_STOCK);          
+        mechanic.setMechanicState(Mechanic.State.CHECKING_STOCK);          
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     /*
@@ -73,7 +67,7 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
     @Override
     public synchronized void resumeRepairProcedure() {
         Mechanic mechanic = ((Mechanic)Thread.currentThread());
-        mechanic.setManagerState(Mechanic.State.FIXING_CAR);        
+        mechanic.setMechanicState(Mechanic.State.FIXING_CAR);        
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -83,11 +77,6 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
     @Override
     public synchronized void fixIt() {
         Mechanic mechanic = ((Mechanic)Thread.currentThread());
-        mechanic.setManagerState(Mechanic.State.FIXING_CAR);
-        try {
-            Thread.sleep((int) (Math.random() * 10 * 1000));
-        } catch (InterruptedException ex) {
-            Logger.getLogger(RepairArea.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        mechanic.setMechanicState(Mechanic.State.FIXING_CAR);
     }
 }

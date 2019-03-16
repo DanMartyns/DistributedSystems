@@ -17,29 +17,38 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * @author danielmartins
  * @author giselapinto
  */
 public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
 
     /**
-     * Queue's Lounge for Lounge
+     * Queue's Lounge
      */
     LinkedList<Customer> fifo = new LinkedList<>();
+    
     /**
-     * Queue dedicated the service "ATENDING CUSTOMER"
+     * Queue dedicated the service "ATENDING CUSTOMER".
      */
-    Queue<String> atending_customer = new LinkedList<>();
+    Queue<Integer> atending_customer = new LinkedList<>();
     /**
-     * Queue dedicated the service "ALERTING CUSTOMER"
+     * Queue dedicated the service "ALERTING CUSTOMER".
      */    
-    Queue<String> alerting_customer = new LinkedList<>();
+    Queue<Integer> alerting_customer = new LinkedList<>();
     /**
-     * Queue dedicated the service "GETING NEW PARTS"
+     * Queue dedicated the service "GETING NEW PARTS".
      */    
     Queue<String> getting_new_parts = new LinkedList<>();
     
+    /**
+     * Boolean variable "talkBetweenManCust" to ensure a conversation between manager and client.
+     */
+    private boolean talkBetweenManCust = false;
     
+    /**
+     * Boolean variable "phoneCustomer" to wake the Customer from his normal life and go get the car.
+     */
+    private boolean phoneCustomer = false;
 
     /**
      * The costumer go into the Lounge and waits for his turn
@@ -47,23 +56,9 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
     @Override
     public synchronized void queueIn() {
         Customer customer = ((Customer)Thread.currentThread());
-        customer.setManagerState(Customer.State.RECEPTION);
+        customer.setCustomerState(Customer.State.RECEPTION);
         fifo.add(customer);
         notifyAll();
-    }
-    
-    /**
-     * The customer spend some time talking with the Manager
-     */
-    @Override   
-    public synchronized void talkWithManager() {
-        Customer customer = ((Customer)Thread.currentThread());
-        customer.setManagerState(Customer.State.RECEPTION);
-        try {
-            Thread.sleep((int) (Math.random() * 10 * 1000));
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Lounge.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
     /**
      * 
@@ -72,7 +67,7 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
     @Override    
     public synchronized int collectKey() {
         Customer customer = ((Customer)Thread.currentThread());
-        customer.setManagerState(Customer.State.WAITING_FOR_REPLACE_CAR);        
+        customer.setCustomerState(Customer.State.WAITING_FOR_REPLACE_CAR);        
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -82,12 +77,7 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
     @Override    
     public synchronized void payForTheService() {
         Customer customer = ((Customer)Thread.currentThread());
-        customer.setManagerState(Customer.State.RECEPTION);        
-        try {
-            Thread.sleep((int) (Math.random() * 10 * 1000));
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Lounge.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        customer.setCustomerState(Customer.State.RECEPTION);        
     }
 
      /** 
@@ -139,11 +129,38 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
     @Override    
     public synchronized void talkToCustomer() {
         Manager manager = ((Manager)Thread.currentThread());
-        manager.setManagerState(Manager.State.ATTENDING_CUSTOMER);        
-        try {
-            Thread.sleep((int) (Math.random() * 10 * 1000));
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Lounge.class.getName()).log(Level.SEVERE, null, ex);
+        manager.setManagerState(Manager.State.ATTENDING_CUSTOMER);
+        
+        if(talkBetweenManCust == false){
+            talkBetweenManCust = true;
+            notifyAll();
+        }
+        else {
+            try {
+                wait();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Lounge.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    /**
+     * The customer spend some time talking with the Manager
+     */
+    @Override   
+    public synchronized void talkWithManager() {
+        Customer customer = ((Customer)Thread.currentThread());
+        customer.setCustomerState(Customer.State.RECEPTION);
+        
+        if(talkBetweenManCust == true){
+            talkBetweenManCust = false;
+            notifyAll();
+        } else {
+            try {
+                wait();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Lounge.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     
@@ -156,19 +173,25 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
     @Override    
     public synchronized void phoneCustomer() {
         Manager manager = ((Manager)Thread.currentThread());
-        manager.setManagerState(Manager.State.ALERTING_COSTUMER);        
-        notifyAll();
+        manager.setManagerState(Manager.State.ALERTING_COSTUMER);
+        if(phoneCustomer == false && !alerting_customer.isEmpty()){
+            phoneCustomer = true;
+            notifyAll();
+        }
+        else{
+            try {
+                wait();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Lounge.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
     }
     
     @Override    
     public synchronized void receivePayment() {
         Manager manager = ((Manager)Thread.currentThread());
-        manager.setManagerState(Manager.State.ATTENDING_CUSTOMER);        
-        try {
-            Thread.sleep((int) (Math.random() * 10 * 1000));
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Lounge.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        manager.setManagerState(Manager.State.ATTENDING_CUSTOMER);
     }
     
     
@@ -178,21 +201,18 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
     @Override
     public synchronized void letManagerKnow() {
         Mechanic mechanic = ((Mechanic)Thread.currentThread());
-        mechanic.setManagerState(Mechanic.State.ALERTING_MANAGER);         
+        mechanic.setMechanicState(Mechanic.State.ALERTING_MANAGER);         
     }
     
     /*
     * Notify the repair is concluded
     */
     @Override
-    public synchronized void repairConcluded() {
+    public synchronized void repairConcluded(int currentCar) {
         Mechanic mechanic = ((Mechanic)Thread.currentThread());
-        mechanic.setManagerState(Mechanic.State.ALERTING_MANAGER);  
-        try {
-            Thread.sleep((int) (Math.random() * 10 * 100));
-        } catch (InterruptedException ex) {
-            Logger.getLogger(RepairArea.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        mechanic.setMechanicState(Mechanic.State.ALERTING_MANAGER);  
+        
+        alerting_customer.add(currentCar);
         notifyAll();
     }
     

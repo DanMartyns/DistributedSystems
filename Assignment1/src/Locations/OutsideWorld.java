@@ -20,14 +20,14 @@ public class OutsideWorld implements CustomerOutSideWorld {
     @Override
     public synchronized boolean decideOnRepair() {
         Customer customer = ((Customer)Thread.currentThread());
-        customer.setManagerState(Customer.State.NORMAL_LIFE_WITH_CAR);        
+        customer.setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);        
         return Math.random() > 0.5;
     }
 
     @Override
     public synchronized void backToWorkByCar() {
         Customer customer = ((Customer)Thread.currentThread());
-        customer.setManagerState(Customer.State.NORMAL_LIFE_WITH_CAR);
+        customer.setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -37,7 +37,7 @@ public class OutsideWorld implements CustomerOutSideWorld {
     @Override
     public synchronized void backToWorkByBus() {
         Customer customer = ((Customer)Thread.currentThread());
-        customer.setManagerState(Customer.State.NORMAL_LIFE_WITHOUT_CAR);
+        customer.setCustomerState(Customer.State.NORMAL_LIFE_WITHOUT_CAR);
         
         //assert customer.withCar() == false;
         

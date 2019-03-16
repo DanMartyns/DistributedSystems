@@ -3,23 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Actors;
-
-import java.util.UUID;
+package MainProgram;
 
 /**
  *
  * @author danielmartins
  */
-public class Car {
-    private final long id;
-
-    public Car() {
-        this.id = UUID.randomUUID().getMostSignificantBits();
-    }
-
-    public long getId() {
-        return id;
-    }
+public class LoggerInterface {
     
 }

@@ -8,8 +8,7 @@ package Actors;
 import Interfaces.CustomerLounge;
 import Interfaces.CustomerOutSideWorld;
 import Interfaces.CustomerPark;
-
-import java.util.UUID;
+import genclass.GenericIO;
 
 /**
  * @author giselapinto
@@ -72,8 +71,15 @@ public class Customer extends Thread {
     /**
     * Identifier the car.
     */
-    private final Car car;
+    private int carID;
     
+    /**
+     * Current Car
+     * If currentCar == carID, it means that the car in your possession is your car.
+     * else if currentCar == 0, it means he has no car in his possession.
+     * else if currentCar == -1 or -2 or -3, it means he has a replacement car in his possession.
+     */
+    private int currentCarID;
     
     /**
     * interface Customer Park.
@@ -100,10 +106,11 @@ public class Customer extends Thread {
      * @param park instance of the Park
      * @param lounge instance of the lounge
      */     
-    public Customer(int id, CustomerOutSideWorld outsideWorld, CustomerPark park, CustomerLounge lounge) {
+    public Customer(int id, CustomerOutSideWorld outsideWorld,int carID, CustomerPark park, CustomerLounge lounge) {
         this.id = id;
         this.state = State.NORMAL_LIFE_WITH_CAR;
-        this.car = new Car();
+        this.carID = carID;
+        this.currentCarID = carID;
         this.outsideWorld = outsideWorld;
         this.park = park;
         this.lounge = lounge;
@@ -113,7 +120,9 @@ public class Customer extends Thread {
     public void run() {
         int keyForReplaceCar;
         
-        while(outsideWorld.decideOnRepair()){
+        if( !outsideWorld.decideOnRepair()){
+            GenericIO.writeString("Customer "+id+" decided not to fix the car.");
+        } else {
             park.goToRepairShop(); //Change State to PARK
             lounge.queueIn(); //Change State to RECEPTION
             lounge.talkWithManager();
@@ -122,7 +131,6 @@ public class Customer extends Thread {
                 keyForReplaceCar = lounge.collectKey(); //Change State to WAITING_FOR_REPLACE_CAR
                 park.findCar(keyForReplaceCar);
                 outsideWorld.backToWorkByCar();
-                /*after some time*/
                 park.goToRepairShop();
             }
 
@@ -132,28 +140,49 @@ public class Customer extends Thread {
 
             lounge.queueIn();
             lounge.payForTheService();
-            park.collectCar(car);
+            park.collectCar(carID);
             outsideWorld.backToWorkByCar();
         }
     }
-
-    public Car getCar() {
-        return car;
+    /**
+     * Get the Customer's car id
+     * 
+     * @return car id
+     */    
+    public int getCar() {
+        return carID;
+    }
+    
+    /**
+     * Get the Customer's current car id
+     * 
+     * @return car id
+     */     
+    public int getCurrentCar(){
+        return currentCarID;
     }
 
     /**
-     * Get the Manager state
-     * 
-     * @return manager state
+     * Set the current car ID
+     * @param currentCarID 
      */
-    public State getManagerState(){
+    public void setCurrentCarID(int currentCarID) {
+        this.currentCarID = currentCarID;
+    }    
+    
+    /**
+     * Get the Customer's State
+     * 
+     * @return customer state
+     */
+    public State getCustomerState(){
         return this.state;
     }
     /**
-     * Set the manager state
-     * @param state manager state
+     * Set the Customer's State
+     * @param state customer state
      */
-    public void setManagerState(State state){
+    public void setCustomerState(State state){
         this.state = state;
     }
     

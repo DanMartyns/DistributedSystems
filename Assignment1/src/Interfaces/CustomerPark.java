@@ -5,8 +5,6 @@
  */
 package Interfaces;
 
-import Actors.Car;
-
 /**
  *
  * @author danielmartins
@@ -18,13 +16,6 @@ public interface CustomerPark {
      * (Class Park)
      */
     void collectCar();
-    
-    /**
-     * Customer collects the car that is already done
-     * @param carID
-     * (Class Park)
-     */
-    void collectCar(Car carID);
     
     /**
      * customer go to repair shop

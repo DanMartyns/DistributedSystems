@@ -5,8 +5,6 @@
  */
 package ProblemInformation;
 
-import Actors.Car;
-
 /**
  *
  * @author giselapinto
@@ -22,10 +20,6 @@ public class Constants {
     public static final int ATENDING_CUSTOMER = 0;
     public static final int ALERTING_CUSTOMER = 1;
     public static final int GETTING_NEW_PARTS = 2;
-    
-    Car car1 = new Car();
-    Car car2 = new Car();
-    Car car3 = new Car();
 
   
 }

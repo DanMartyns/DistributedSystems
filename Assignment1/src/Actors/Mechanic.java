@@ -3,16 +3,15 @@ package Actors;
 import Interfaces.MechanicsLounge;
 import Interfaces.MechanicsPark;
 import Interfaces.MechanicsRepairArea;
-import Locations.Lounge;
-import Locations.Park;
-import Locations.RepairArea;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author giselapinto
  * @author danielmartins
  */
 public class Mechanic extends Thread {
-    
+
     public enum State { 
         /**
          * WAITING FOR WORK.
@@ -54,6 +53,11 @@ public class Mechanic extends Thread {
      * The State of the Mechanic
      */
     private State state;
+    
+    /**
+     * Car currently being serviced
+     */
+    private int currentCarToRepair = 0;
     
    
     /**
@@ -115,8 +119,14 @@ public class Mechanic extends Thread {
                 }
             }
             repairArea.fixIt();
-            park.returnVehicle();
-            lounge.repairConcluded();
+            
+            try {
+                sleep(5000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Mechanic.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            currentCarToRepair =  park.returnVehicle();
+            lounge.repairConcluded(currentCarToRepair);
 
         }   
     }
@@ -125,15 +135,30 @@ public class Mechanic extends Thread {
      * 
      * @return mechanic state
      */
-    public State getManagerState(){
+    public State getMechanicState(){
         return this.state;
     }
     /**
      * Set the manager state
      * @param state mechanic state
      */
-    public void setManagerState(State state){
+    public void setMechanicState(State state){
         this.state = state;
     }
+    /**
+     * Get the car that is in the hands of the mechanic 
+     * @return the car id
+     */
+    public int getCurrentCarToRepair() {
+        return currentCarToRepair;
+    }
+    /**
+     * Set the car that is in the hands of the mechanic 
+     * @param currentCarToRepair 
+     */
+    public void setCurrentCarToRepair(int currentCarToRepair) {
+        this.currentCarToRepair = currentCarToRepair;
+    }
+        
 } 
 
