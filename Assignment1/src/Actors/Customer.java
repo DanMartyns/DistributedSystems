@@ -121,26 +121,39 @@ public class Customer extends Thread {
         int keyForReplaceCar;
         
         if( !outsideWorld.decideOnRepair()){
-            GenericIO.writeString("Customer "+id+" decided not to fix the car.");
+            GenericIO.writelnString("Customer "+id+" decided not to fix the car.");
         } else {
+            GenericIO.writelnString("Customer "+id+" decided to fix the car.");
+            GenericIO.writelnString("Customer "+id+" go to repair shop");
             park.goToRepairShop(); //Change State to PARK
-            lounge.queueIn(); //Change State to RECEPTION
+            
+            GenericIO.writelnString("Customer "+id+" queueIn");
+            lounge.queueIn(id); //Change State to RECEPTION
+            
+            GenericIO.writelnString("Customer "+id+" talk with manager");
             lounge.talkWithManager();
 
             if(wantsReplaceCar){
+                GenericIO.writelnString("Customer "+id+" talk with manager");
+
                 keyForReplaceCar = lounge.collectKey(); //Change State to WAITING_FOR_REPLACE_CAR
                 park.findCar(keyForReplaceCar);
+                GenericIO.writelnString("Customer "+id+" goes to work by car");
+
                 outsideWorld.backToWorkByCar();
                 park.goToRepairShop();
             }
 
             else {
+                GenericIO.writelnString("Customer "+id+" goes to work by bus");
+
                 outsideWorld.backToWorkByBus();
             }
+            GenericIO.writelnString("Customer "+id+" back to lounge to get car");
 
-            lounge.queueIn();
+            lounge.queueIn(id);
             lounge.payForTheService();
-            park.collectCar(carID);
+            park.collectCar();
             outsideWorld.backToWorkByCar();
         }
     }

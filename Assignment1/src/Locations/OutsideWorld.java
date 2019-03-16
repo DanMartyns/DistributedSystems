@@ -7,6 +7,7 @@ package Locations;
 
 import Actors.Customer;
 import Interfaces.CustomerOutSideWorld;
+import genclass.GenericIO;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,15 +18,15 @@ import java.util.logging.Logger;
 public class OutsideWorld implements CustomerOutSideWorld {
      // lista com os costumers no outside
 
-    @Override
     public synchronized boolean decideOnRepair() {
+        GenericIO.writelnString("------>>>>> (OutsideWorld) decideOnRepair function");
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);        
         return Math.random() > 0.5;
     }
 
-    @Override
     public synchronized void backToWorkByCar() {
+        GenericIO.writelnString("------>>>>> (OutsideWorld) backToWorkByCar function");
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -34,8 +35,8 @@ public class OutsideWorld implements CustomerOutSideWorld {
     /**
      * Waits for the repairment of the car
      */
-    @Override
     public synchronized void backToWorkByBus() {
+        GenericIO.writelnString("------>>>>> (OutsideWorld) backToWorkByBus function");
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.NORMAL_LIFE_WITHOUT_CAR);
         

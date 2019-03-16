@@ -9,6 +9,7 @@ import Actors.Customer;
 import Actors.Mechanic;
 import Interfaces.CustomerPark;
 import Interfaces.MechanicsPark;
+import genclass.GenericIO;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.logging.Level;
@@ -44,8 +45,8 @@ public class Park implements CustomerPark, MechanicsPark{
     /**
      * The customer park the car in the park.
      */
-    @Override
     public synchronized void goToRepairShop() {
+        GenericIO.writelnString("------>>>>> (Park) goToRepairShop function");
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.PARK);
         
@@ -79,8 +80,8 @@ public class Park implements CustomerPark, MechanicsPark{
      * Method used by the customer to search for a replacement car
      * @param keyForReplaceCar 
      */
-    @Override
     public synchronized void findCar(long keyForReplaceCar) {
+        GenericIO.writelnString("------>>>>> (Park) findCar function");
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.PARK);
         
@@ -104,8 +105,8 @@ public class Park implements CustomerPark, MechanicsPark{
     /**
      * Method for fetching the car after it has been repaired.
      */
-    @Override
     public synchronized void collectCar() {
+        GenericIO.writelnString("------>>>>> (Park) collectCar function");
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.PARK);
         
@@ -128,8 +129,8 @@ public class Park implements CustomerPark, MechanicsPark{
      * Method used by the mechanic to get the car to be repaired
      * @return the car id
      */
-    @Override
     public synchronized void getVehicle() {
+        GenericIO.writelnString("------>>>>> (Park) getVehicle function");
         Mechanic mechanic = ((Mechanic)Thread.currentThread());
         mechanic.setMechanicState(Mechanic.State.FIXING_CAR);
         
@@ -141,13 +142,14 @@ public class Park implements CustomerPark, MechanicsPark{
         } else {
             mechanic.setCurrentCarToRepair(cars.poll());
         }
+        
     }
     /**
      * 
      * @return 
      */
-    @Override
-    public synchronized int returnVehicle() {
+    public synchronized int returnVehicle(int carId) {
+        GenericIO.writelnString("------>>>>> (Park) returnVehicle function");
         Mechanic mechanic = ((Mechanic)Thread.currentThread());
         mechanic.setMechanicState(Mechanic.State.FIXING_CAR);
         int vehicle = mechanic.getCurrentCarToRepair();

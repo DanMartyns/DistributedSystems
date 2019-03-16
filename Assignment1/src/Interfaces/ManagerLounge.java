@@ -25,7 +25,7 @@ public interface ManagerLounge {
     /**
      * Talk to Customer (Lounge)
      */
-    public void talkToCustomer();
+    public int talkToCustomer();
     
     /**
      * Receive Payment (Lounge)

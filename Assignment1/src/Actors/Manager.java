@@ -11,12 +11,14 @@ import Interfaces.ManagerSupplierSite;
 import static ProblemInformation.Constants.ALERTING_CUSTOMER;
 import static ProblemInformation.Constants.ATENDING_CUSTOMER;
 import static ProblemInformation.Constants.GETTING_NEW_PARTS;
+import genclass.GenericIO;
 
 /**
  * @author giselapinto
  * @author danielmartins
  */
 public class Manager extends Thread {
+
     
     public enum State { 
         /**
@@ -97,7 +99,8 @@ public class Manager extends Thread {
      * @param lounge instance of the lounge
      * @param supplierSite instance of the supplier site
      * @param repairArea instance of the repair area
-     */    
+     */
+    
     public Manager(int id, ManagerLounge lounge, ManagerSupplierSite supplierSite, ManagerRepairArea repairArea) {
         this.state = State.CHECKING_WHAT_TO_DO;
         this.id = id;
@@ -111,27 +114,37 @@ public class Manager extends Thread {
      */ 
     @Override
     public void run(){
+        GenericIO.writelnString("Manager is alive");
+
         while(lounge.getNextTask()){
+            GenericIO.writelnString("Manager is checking what to do");
+
             this.state = State.CHECKING_WHAT_TO_DO;
             switch(lounge.appraiseSit()){
+                
                 case ATENDING_CUSTOMER:
+                    GenericIO.writelnString("Manager is atending customer");
                     this.state = State.ATTENDING_CUSTOMER;
                     int costumer = lounge.talkToCustomer();
                     lounge.handCarKey();
-                    this.stateOfService = repairArea.registerService(costumer); //Updated Status : Posting Job
+                    //this.stateOfService = 
+                    repairArea.registerService(costumer); //Updated Status : Posting Job
                     break;
                 case ALERTING_CUSTOMER:
+                    GenericIO.writelnString("Manager is alerting customer");
                     this.state = State.ALERTING_COSTUMER;
                     lounge.phoneCustomer();
                     lounge.getNextTask();
-                    lounge.talkToCustomer();
+                    int customer1 = lounge.talkToCustomer();
                     lounge.receivePayment();
                     break;
                 case GETTING_NEW_PARTS:
+                    GenericIO.writelnString("Manager is getting new parts");
                     this.state = State.GETTING_NEW_PARTS;
                     supplierSite.goToSupplier();
                     supplierSite.storePart(); //Updated Status : Replenish Stock
                     break;
+                    
             }
         }
     }

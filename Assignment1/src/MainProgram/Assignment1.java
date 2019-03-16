@@ -55,10 +55,9 @@ public class Assignment1 {
         RepairArea repairArea = new RepairArea();
         SupplierSite supplierSite = new SupplierSite();
         
-        Manager thread_manager;
-        Mechanic[] thread_mechanic = new Mechanic[NUM_MECHANICS];
         Customer[] thread_customer = new Customer[NUM_CUSTOMERS];
-        
+        Mechanic[] thread_mechanic = new Mechanic[NUM_MECHANICS];
+
         //random to choose if customer wants a replacement car or not
         Random rand_replace = new Random();
         //if 0-> NO else YES!!
@@ -78,7 +77,7 @@ public class Assignment1 {
         }
         
         
-        thread_manager = new Manager(1, (ManagerLounge) lounge, (ManagerSupplierSite) supplierSite, (ManagerRepairArea) repairArea);
+        Manager thread_manager = new Manager(1, (ManagerLounge) lounge, (ManagerSupplierSite) supplierSite, (ManagerRepairArea) repairArea);
         //lunch run thread from manager
         thread_manager.start();
         

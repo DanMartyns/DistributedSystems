@@ -22,6 +22,6 @@ public interface MechanicsPark {
     * Mechanics finish de repair procedure and let the car in the park
     * (Class Park)
     */
-    int returnVehicle();
+    int returnVehicle(int carId);
     
 }

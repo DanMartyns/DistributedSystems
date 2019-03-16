@@ -10,7 +10,11 @@ package ProblemInformation;
  * @author giselapinto
  */
 public class Constants {
-    public static final int NUM_CUSTOMERS = 30;
+    //public static final int NUM_CUSTOMERS = 30;
+    /*
+    * Efeitos de teste consideramos 5 customers
+    */
+    public static final int NUM_CUSTOMERS = 5;
     public static final int NUM_MECHANICS = 2;
     public static final int NUM_REP_VEH = 3;
     public static final int TYPE_PARTS = 3;

@@ -14,7 +14,8 @@ public interface MechanicsRepairArea {
     /**
      * when mechanics have a service to do, he starts the repair procedure
      * (Class RepairArea)
-     */
+     * @return car id to procedue repair 
+    */
     void startRepairProcedure();
     
  
@@ -22,7 +23,7 @@ public interface MechanicsRepairArea {
      * Mechanics Fix the car
      * (Class RepairArea)
      */
-    void fixIt();
+    int fixIt();
  
     /**
      * If mechanics need a part, he goes to his supplier to get the required part

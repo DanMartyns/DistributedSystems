@@ -11,6 +11,10 @@ import Actors.Mechanic;
 import Interfaces.CustomerLounge;
 import Interfaces.ManagerLounge;
 import Interfaces.MechanicsLounge;
+import static ProblemInformation.Constants.ALERTING_CUSTOMER;
+import static ProblemInformation.Constants.ATENDING_CUSTOMER;
+import static ProblemInformation.Constants.GETTING_NEW_PARTS;
+import genclass.GenericIO;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.logging.Level;
@@ -25,7 +29,7 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
     /**
      * Queue's Lounge
      */
-    LinkedList<Customer> fifo = new LinkedList<>();
+    //LinkedList<Customer> fifo = new LinkedList<>();
     
     /**
      * Queue dedicated the service "ATENDING CUSTOMER".
@@ -53,19 +57,22 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
     /**
      * The costumer go into the Lounge and waits for his turn
      */
-    @Override
-    public synchronized void queueIn() {
+    public synchronized void queueIn(int id) {
+        GenericIO.writelnString("------>>>>> (Lounge) queueIn function");
+
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.RECEPTION);
-        fifo.add(customer);
+        //fifo.add(customer);
+        atending_customer.add(id);
         notifyAll();
     }
     /**
      * 
      * @return 
      */
-    @Override    
     public synchronized int collectKey() {
+        GenericIO.writelnString("------>>>>> (Lounge) collectKey function");
+
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.WAITING_FOR_REPLACE_CAR);        
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -74,8 +81,9 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
     /**
      * Para questões de simulação o pagamento é descrito por um tempo de espera entre 0 e 10 segundos
      */
-    @Override    
     public synchronized void payForTheService() {
+        GenericIO.writelnString("------>>>>> (Lounge) payForTheService function");
+
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.RECEPTION);        
     }
@@ -84,11 +92,23 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
       * Choose the next task
       * @return
       */
-    @Override    
     public synchronized boolean getNextTask() {
+        GenericIO.writelnString("------>>>>> (Lounge) getNextTask function");
+
         Manager manager = ((Manager)Thread.currentThread());
-        manager.setManagerState(Manager.State.CHECKING_WHAT_TO_DO);        
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        manager.setManagerState(Manager.State.CHECKING_WHAT_TO_DO);
+        
+        
+        if(atending_customer.isEmpty() || alerting_customer.isEmpty() || getting_new_parts.isEmpty()){
+            try {
+                wait();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Lounge.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } 
+
+        return true;
+         
     }
     /**
      * Choose between 0 and 2 what task will choose 
@@ -97,43 +117,58 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      * 2 - GETTING_NEW_PARTS
      * @return 
      */
-    @Override    
     public synchronized int appraiseSit() {
+        GenericIO.writelnString("------>>>>> (Lounge) appraiseSit function");
         Manager manager = ((Manager)Thread.currentThread());
         manager.setManagerState(Manager.State.CHECKING_WHAT_TO_DO);
 
-        int min = 0;
-        int max = 2;
-        int range = max - min + 1;
-        
-        if (atending_customer.isEmpty()){
-            min = 1;
-            range = max - min + 1;
-            return (int) (Math.random() * range) + 1;
-        }else if (alerting_customer.isEmpty()){
-           double val = Math.random();
-           if (val > 0.5)
-               return 2;
-           else
-               return 0;
-        }else if (getting_new_parts.isEmpty()){
-            max = 1;
-            range = max - min + 1; 
-            return (int) (Math.random() * range) + 1;
-        }
-        return (int) (Math.random() * range) + 1;
+//        int min = 0;
+//        int max = 2;
+//        int range = max - min + 1;
+//        
+//        if (atending_customer.isEmpty()){
+//            min = 1;
+//            range = max - min + 1;
+//            return (int) (Math.random() * range) + 1;
+//        }else if (alerting_customer.isEmpty()){
+//           double val = Math.random();
+//           if (val > 0.5)
+//               return 2;
+//           else
+//               return 0;
+//        }else if (getting_new_parts.isEmpty()){
+//            max = 1;
+//            range = max - min + 1; 
+//            return (int) (Math.random() * range) + 1;
+//        }
+//        return (int) (Math.random() * range) + 1;
+
+
+          if(!atending_customer.isEmpty()){
+              return ATENDING_CUSTOMER;
+          }
+          else if(!alerting_customer.isEmpty()){
+              return ALERTING_CUSTOMER;
+          } 
+          else if(!getting_new_parts.isEmpty()){
+              return GETTING_NEW_PARTS;
+          }
+          return ATENDING_CUSTOMER;
     }
     /**
      * Spend some time talking with Customer
      */
-    @Override    
-    public synchronized void talkToCustomer() {
+    public synchronized int talkToCustomer() {
+        GenericIO.writelnString("------>>>>> (Lounge) talkToCustomer function");
         Manager manager = ((Manager)Thread.currentThread());
         manager.setManagerState(Manager.State.ATTENDING_CUSTOMER);
-        
+        GenericIO.writelnString("--------------------->>>>> (Lounge) talkToCustomer: "+talkBetweenManCust);
+
         if(talkBetweenManCust == false){
             talkBetweenManCust = true;
+            GenericIO.writelnString("--------------------->>>>> (Lounge) talkToCustomer dentro do if: "+talkBetweenManCust);
             notifyAll();
+
         }
         else {
             try {
@@ -142,18 +177,24 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
                 Logger.getLogger(Lounge.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        GenericIO.writelnString("--------------------->>>>> (Lounge) talkToCustomer depois do if: "+talkBetweenManCust);
+
+        return atending_customer.poll();
     }
     
     /**
      * The customer spend some time talking with the Manager
      */
-    @Override   
     public synchronized void talkWithManager() {
+        GenericIO.writelnString("------>>>>> (Lounge) talkWithManager function");
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.RECEPTION);
-        
+        GenericIO.writelnString("--------------------->>>>> (Lounge) talkWithManager: "+talkBetweenManCust);
+
         if(talkBetweenManCust == true){
             talkBetweenManCust = false;
+            GenericIO.writelnString("--------------------->>>>> (Lounge) talkWithManager dentro do if: "+talkBetweenManCust);
+
             notifyAll();
         } else {
             try {
@@ -162,20 +203,24 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
                 Logger.getLogger(Lounge.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        GenericIO.writelnString("--------------------->>>>> (Lounge) talkWithManager depois do if: "+talkBetweenManCust);
+
     }
     
-    @Override    
     public synchronized void handCarKey() { //Perguntar
+        GenericIO.writelnString("------>>>>> (Lounge) handCarKey function");
         Manager manager = ((Manager)Thread.currentThread());
         manager.setManagerState(Manager.State.ATTENDING_CUSTOMER);        
         //TODO
     }
-    @Override    
+    
     public synchronized void phoneCustomer() {
+        GenericIO.writelnString("------>>>>> (Lounge) phoneCustomer function");
         Manager manager = ((Manager)Thread.currentThread());
         manager.setManagerState(Manager.State.ALERTING_COSTUMER);
         if(phoneCustomer == false && !alerting_customer.isEmpty()){
             phoneCustomer = true;
+            alerting_customer.poll();
             notifyAll();
         }
         else{
@@ -188,8 +233,8 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
 
     }
     
-    @Override    
     public synchronized void receivePayment() {
+        GenericIO.writelnString("------>>>>> (Lounge) receivePayment function");
         Manager manager = ((Manager)Thread.currentThread());
         manager.setManagerState(Manager.State.ATTENDING_CUSTOMER);
     }
@@ -198,8 +243,8 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
     /*
     * Let manager know that the mechanics needs more pieces from supplier site
     */
-    @Override
     public synchronized void letManagerKnow() {
+        GenericIO.writelnString("------>>>>> (Lounge) letManagerKnow function");
         Mechanic mechanic = ((Mechanic)Thread.currentThread());
         mechanic.setMechanicState(Mechanic.State.ALERTING_MANAGER);         
     }
@@ -207,8 +252,8 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
     /*
     * Notify the repair is concluded
     */
-    @Override
     public synchronized void repairConcluded(int currentCar) {
+        GenericIO.writelnString("------>>>>> (Lounge) repairConcluded function");
         Mechanic mechanic = ((Mechanic)Thread.currentThread());
         mechanic.setMechanicState(Mechanic.State.ALERTING_MANAGER);  
         

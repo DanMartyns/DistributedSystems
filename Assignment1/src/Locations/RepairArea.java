@@ -9,6 +9,7 @@ import Actors.Mechanic;
 import Actors.Manager;
 import Interfaces.ManagerRepairArea;
 import Interfaces.MechanicsRepairArea;
+import genclass.GenericIO;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -42,8 +43,8 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
     /**
      * The mechanic remains in the "read paper" state, while the list is empty. If not, continue
      */
-    @Override
     public synchronized void readThePaper() {
+        GenericIO.writelnString("------>>>>> (RepairArea) readThePaper function");
         Mechanic mechanic = ((Mechanic)Thread.currentThread());
         mechanic.setMechanicState(Mechanic.State.WAITING_FOR_WORK);         
         
@@ -60,8 +61,8 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
      * The manager records the repair of a car. 
      * @param customer 
      */
-    @Override
     public synchronized void registerService(int customer) {
+        GenericIO.writelnString("------>>>>> (RepairArea) registerService function");
         Manager manager = ((Manager)Thread.currentThread());
         manager.setManagerState(Manager.State.POSTING_JOB);
       
@@ -76,14 +77,16 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
         int range = max - min + 1;
         CarsToBeRepaired.putIfAbsent(customer,(int) (Math.random() * range) + 1 );
         notifyAll();
+        
+        //return 1;
     }
 
     /**
      * In terms of simulation, it does no useful work. 
      * Transition state
      */
-    @Override
     public synchronized void startRepairProcedure() {
+        GenericIO.writelnString("------>>>>> (RepairArea) startRepairProcedure function");
         Mechanic mechanic = ((Mechanic)Thread.currentThread());
         mechanic.setMechanicState(Mechanic.State.FIXING_CAR);
     }
@@ -91,8 +94,8 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
     /*
     * Getting new pieces
     */
-    @Override
     public synchronized void getRequiredPart() {
+        GenericIO.writelnString("------>>>>> (RepairArea) getRequiredPart function");
         Mechanic mechanic = ((Mechanic)Thread.currentThread());
         mechanic.setMechanicState(Mechanic.State.CHECKING_STOCK);   
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -102,8 +105,8 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
     * Checking the stock repetily
     * @return if mechanics has parts with him or not
     */
-    @Override
     public synchronized boolean partAvailable() {
+        GenericIO.writelnString("------>>>>> (RepairArea) partAvailable function");
         Mechanic mechanic = ((Mechanic)Thread.currentThread());
         mechanic.setMechanicState(Mechanic.State.CHECKING_STOCK);          
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -111,19 +114,22 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
     /*
     * Back to fix
     */
-    @Override
     public synchronized void resumeRepairProcedure() {
+        GenericIO.writelnString("------>>>>> (RepairArea) resumeRepairProcedure function");
         Mechanic mechanic = ((Mechanic)Thread.currentThread());
         mechanic.setMechanicState(Mechanic.State.FIXING_CAR);        
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /*
-    * Process the fix
+    * Process the fix the car from customer
     */
-    @Override
-    public synchronized void fixIt() {
+    public synchronized int fixIt() {
+        GenericIO.writelnString("------>>>>> (RepairArea) fixIt function");
         Mechanic mechanic = ((Mechanic)Thread.currentThread());
         mechanic.setMechanicState(Mechanic.State.FIXING_CAR);
+        
+        int fix_car = mechanic.getCurrentCarToRepair();
+        return fix_car;
     }
 }

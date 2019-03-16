@@ -3,6 +3,7 @@ package Actors;
 import Interfaces.MechanicsLounge;
 import Interfaces.MechanicsPark;
 import Interfaces.MechanicsRepairArea;
+import genclass.GenericIO;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -98,19 +99,26 @@ public class Mechanic extends Thread {
     public void run() {
         boolean partsInStock = true;
         while(true){
+            GenericIO.writelnString("Mechanics "+id+" is reading the paper");
             this.state = State.WAITING_FOR_WORK;
             repairArea.readThePaper();
             repairArea.startRepairProcedure();
             park.getVehicle();
 
             if(!partsInStock){
+                GenericIO.writelnString("Mechanics "+id+" is requiring new parts");
+
                 repairArea.getRequiredPart();
                 
                 if (repairArea.partAvailable()){
+                    GenericIO.writelnString("Mechanics "+id+" is checking parts available");
+
                     repairArea.resumeRepairProcedure();
                 }
 
                 else {
+                    GenericIO.writelnString("Mechanics "+id+" is notifing manager");
+
                     lounge.letManagerKnow();
                     repairArea.readThePaper();
                     repairArea.startRepairProcedure();
@@ -119,14 +127,16 @@ public class Mechanic extends Thread {
 
                 }
             }
-            repairArea.fixIt();
+            GenericIO.writelnString("Mechanics "+id+" is fixing the car");
+
+            int carfixed = repairArea.fixIt();
             
             try {
                 sleep(5000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Mechanic.class.getName()).log(Level.SEVERE, null, ex);
             }
-            currentCarToRepair =  park.returnVehicle();
+            currentCarToRepair =  park.returnVehicle(carfixed);
             lounge.repairConcluded(currentCarToRepair);
 
         }   

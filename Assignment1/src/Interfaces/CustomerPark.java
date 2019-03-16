@@ -17,6 +17,7 @@ public interface CustomerPark {
      */
     void collectCar();
     
+    
     /**
      * customer go to repair shop
      * (Class Park)

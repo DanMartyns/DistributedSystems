@@ -13,8 +13,9 @@ public interface CustomerLounge {
     /**
      * customer is waiting for manager to talk
      * (Class Lounge)
+     * @param id from customer
      */
-    void queueIn();
+    void queueIn(int id);
     
     /**
      * customer talks with manager
