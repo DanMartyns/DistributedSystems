@@ -12,7 +12,6 @@ package Interfaces;
 public interface ManagerRepairArea {
     /**
      * Register a Service (RepairArea)
-     * @return
      */
-    public int registerService();    
+    public void registerService(int customer);    
 }

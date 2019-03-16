@@ -116,9 +116,9 @@ public class Manager extends Thread {
             switch(lounge.appraiseSit()){
                 case ATENDING_CUSTOMER:
                     this.state = State.ATTENDING_CUSTOMER;
-                    lounge.talkToCustomer();
+                    int costumer = lounge.talkToCustomer();
                     lounge.handCarKey();
-                    this.stateOfService = repairArea.registerService(); //Updated Status : Posting Job
+                    this.stateOfService = repairArea.registerService(costumer); //Updated Status : Posting Job
                     break;
                 case ALERTING_CUSTOMER:
                     this.state = State.ALERTING_COSTUMER;
