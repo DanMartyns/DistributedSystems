@@ -158,6 +158,13 @@ public class Customer extends Thread {
         }
     }
     /**
+     * 
+     * @return id of the Customer 
+     */
+    public int getID(){
+        return id;
+    }
+    /**
      * Get the Customer's car id
      * 
      * @return car id
@@ -198,5 +205,6 @@ public class Customer extends Thread {
     public void setCustomerState(State state){
         this.state = state;
     }
+    
     
 }

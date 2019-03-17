@@ -37,12 +37,17 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
     /**
      * Queue dedicated the service "GETING NEW PARTS".
      */    
-    Queue<String> getting_new_parts = new LinkedList<>();
+    Queue<Integer> getting_new_parts = new LinkedList<>();
     
     /**
      * Boolean variable "talkBetweenManCust" to ensure a conversation between manager and client.
      */
     private boolean talkBetweenManCust = false;
+    
+    /**
+     * Variable that identifies the customer being serviced.
+     */
+    private int currentCustomer = 0;
     
     /**
      * Boolean variable "phoneCustomer" to wake the Customer from his normal life and go get the car.
@@ -97,7 +102,8 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
             try {
                 wait();
             } catch (InterruptedException ex) {
-                Logger.getLogger(Lounge.class.getName()).log(Level.SEVERE, null, ex);
+                GenericIO.writelnString("getNextTask - Manager thread was interrupted.");
+                System.exit(1);
             }
         } 
 
@@ -117,7 +123,10 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
         GenericIO.writelnString("------>>>>> (Lounge) appraiseSit function");
         Manager manager = ((Manager)Thread.currentThread());
         manager.setManagerState(Manager.State.CHECKING_WHAT_TO_DO);
-
+        
+        GenericIO.writelnString("   Atending Customer EMPTY ? "+atending_customer.isEmpty());
+        GenericIO.writelnString("   Alerting Customer EMPTY ? "+alerting_customer.isEmpty());
+        GenericIO.writelnString("   Geting new parts EMPTY ? "+getting_new_parts.isEmpty());        
         return ( !atending_customer.isEmpty() ? ALERTING_CUSTOMER : ( !alerting_customer.isEmpty() ? ALERTING_CUSTOMER : GETTING_NEW_PARTS )) ;
 //        int min = 0;
 //        int max = 2;
@@ -166,51 +175,61 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      * Spend some time talking with Customer
      */
     public synchronized int talkToCustomer() {
-        GenericIO.writelnString("------>>>>> (Lounge) talkToCustomer function");
         Manager manager = ((Manager)Thread.currentThread());
         manager.setManagerState(Manager.State.ATTENDING_CUSTOMER);
-        GenericIO.writelnString("--------------------->>>>> (Lounge) talkToCustomer: "+talkBetweenManCust);
 
+        /**
+         * The manager starts a conversation by putting the "talkBetweenManCust" variable to true
+         */
         if(talkBetweenManCust == false){
             talkBetweenManCust = true;
-            GenericIO.writelnString("--------------------->>>>> (Lounge) talkToCustomer dentro do if: "+talkBetweenManCust);
             notifyAll();
 
         }
         else {
+            /**
+             * If not, wait for a customer response
+             */
             try {
                 wait();
             } catch (InterruptedException ex) {
-                Logger.getLogger(Lounge.class.getName()).log(Level.SEVERE, null, ex);
+                GenericIO.writelnString("talkWithCustomer - Manager thread was interrupted.");
+                System.exit(1);
             }
         }
-        GenericIO.writelnString("--------------------->>>>> (Lounge) talkToCustomer depois do if: "+talkBetweenManCust);
-
-        return atending_customer.poll();
+        /**
+         * Updates the current customer variable.
+         */
+        currentCustomer = atending_customer.poll();
+        return currentCustomer;
     }
     
     /**
      * The customer spend some time talking with the Manager
      */
     public synchronized void talkWithManager() {
-        GenericIO.writelnString("------>>>>> (Lounge) talkWithManager function");
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.RECEPTION);
-        GenericIO.writelnString("--------------------->>>>> (Lounge) talkWithManager: "+talkBetweenManCust);
 
-        if(talkBetweenManCust == true){
+        /**
+         * If the manager has started a conversation and is the client to be answered, 
+         * it sets the "talkBetweenManCust" variable to false, 
+         * which means that it responded, and wakes up the other threads.
+         */
+        if(talkBetweenManCust == true && customer.getID() == currentCustomer){
             talkBetweenManCust = false;
-            GenericIO.writelnString("--------------------->>>>> (Lounge) talkWithManager dentro do if: "+talkBetweenManCust);
-
             notifyAll();
         } else {
+            /**
+             * If it is not the customer being served or the manager has not yet started a conversation, then wait.
+             */
             try {
                 wait();
             } catch (InterruptedException ex) {
-                Logger.getLogger(Lounge.class.getName()).log(Level.SEVERE, null, ex);
+                GenericIO.writelnString("talkWithManager - One Customer thread was interrupted.");
+                System.exit(1);
             }
         }
-        GenericIO.writelnString("--------------------->>>>> (Lounge) talkWithManager depois do if: "+talkBetweenManCust);
 
     }
     
