@@ -25,11 +25,6 @@ import java.util.logging.Logger;
  * @author giselapinto
  */
 public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
-
-    /**
-     * Queue's Lounge
-     */
-    //LinkedList<Customer> fifo = new LinkedList<>();
     
     /**
      * Queue dedicated the service "ATENDING CUSTOMER".
@@ -62,7 +57,6 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
 
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.RECEPTION);
-        //fifo.add(customer);
         atending_customer.add(id);
         notifyAll();
     }
@@ -118,42 +112,55 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      * @return 
      */
     public synchronized int appraiseSit() {
+        assert(!atending_customer.isEmpty() || !alerting_customer.isEmpty() || !getting_new_parts.isEmpty());
+        
         GenericIO.writelnString("------>>>>> (Lounge) appraiseSit function");
         Manager manager = ((Manager)Thread.currentThread());
         manager.setManagerState(Manager.State.CHECKING_WHAT_TO_DO);
 
+        return ( !atending_customer.isEmpty() ? ALERTING_CUSTOMER : ( !alerting_customer.isEmpty() ? ALERTING_CUSTOMER : GETTING_NEW_PARTS )) ;
 //        int min = 0;
 //        int max = 2;
 //        int range = max - min + 1;
+//        int result = 0;
 //        
 //        if (atending_customer.isEmpty()){
 //            min = 1;
 //            range = max - min + 1;
-//            return (int) (Math.random() * range) + 1;
+//            result = (int) (Math.random() * range) + 1;
+//            GenericIO.writelnString("Result 1 :"+result);
+//            return result;
 //        }else if (alerting_customer.isEmpty()){
 //           double val = Math.random();
-//           if (val > 0.5)
-//               return 2;
-//           else
-//               return 0;
+//           if (val > 0.5){
+//                GenericIO.writelnString("Result 2 :"+ 2);
+//                return 2;
+//           }else{
+//                GenericIO.writelnString("Result 3 :"+ 0);
+//                return 0;
+//           }
+//
 //        }else if (getting_new_parts.isEmpty()){
 //            max = 1;
 //            range = max - min + 1; 
-//            return (int) (Math.random() * range) + 1;
+//            result = (int) (Math.random() * range) + 1;
+//            GenericIO.writelnString("Result 4 :"+result);
+//            return result;
 //        }
-//        return (int) (Math.random() * range) + 1;
+//        result = (int) (Math.random() * range) + 1;
+//        GenericIO.writelnString("Result 5 :"+result);
+//        return result;
 
-
-          if(!atending_customer.isEmpty()){
-              return ATENDING_CUSTOMER;
-          }
-          else if(!alerting_customer.isEmpty()){
-              return ALERTING_CUSTOMER;
-          } 
-          else if(!getting_new_parts.isEmpty()){
-              return GETTING_NEW_PARTS;
-          }
-          return ATENDING_CUSTOMER;
+//          if(!atending_customer.isEmpty()){
+//              return ATENDING_CUSTOMER;
+//          }
+//          else if(!alerting_customer.isEmpty()){
+//              return ALERTING_CUSTOMER;
+//          } 
+//          else if(!getting_new_parts.isEmpty()){
+//              return GETTING_NEW_PARTS;
+//          }
+//          return ATENDING_CUSTOMER;
     }
     /**
      * Spend some time talking with Customer
