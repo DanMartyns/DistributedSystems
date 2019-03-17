@@ -97,12 +97,17 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
         Manager manager = ((Manager)Thread.currentThread());
         manager.setManagerState(Manager.State.CHECKING_WHAT_TO_DO);
         
+        GenericIO.writelnString("------------>>>>> (Lounge) get next task  Atending Customer EMPTY ? "+atending_customer.isEmpty());
+        GenericIO.writelnString(" ----------->>>>> (Lounge) get next task Alerting Customer EMPTY ? "+alerting_customer.isEmpty());
+        GenericIO.writelnString("------------->>>>> (Lounge) get next task  Geting new parts EMPTY ? "+getting_new_parts.isEmpty());        
+       
         
         if(atending_customer.isEmpty() || alerting_customer.isEmpty() || getting_new_parts.isEmpty()){
+            
             try {
                 wait();
             } catch (InterruptedException ex) {
-                GenericIO.writelnString("getNextTask - Manager thread was interrupted.");
+                GenericIO.writelnString("-------------->>>>> (Lounge) getNextTask - Manager thread was interrupted.");
                 System.exit(1);
             }
         } 
@@ -124,10 +129,10 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
         Manager manager = ((Manager)Thread.currentThread());
         manager.setManagerState(Manager.State.CHECKING_WHAT_TO_DO);
         
-        GenericIO.writelnString("   Atending Customer EMPTY ? "+atending_customer.isEmpty());
-        GenericIO.writelnString("   Alerting Customer EMPTY ? "+alerting_customer.isEmpty());
-        GenericIO.writelnString("   Geting new parts EMPTY ? "+getting_new_parts.isEmpty());        
-        return ( !atending_customer.isEmpty() ? ALERTING_CUSTOMER : ( !alerting_customer.isEmpty() ? ALERTING_CUSTOMER : GETTING_NEW_PARTS )) ;
+        GenericIO.writelnString("------------>>>>> (Lounge)   Atending Customer EMPTY ? "+atending_customer.isEmpty());
+        GenericIO.writelnString(" ----------->>>>> (Lounge)  Alerting Customer EMPTY ? "+alerting_customer.isEmpty());
+        GenericIO.writelnString("------------->>>>> (Lounge)   Geting new parts EMPTY ? "+getting_new_parts.isEmpty());        
+        return ( !atending_customer.isEmpty() ? ATENDING_CUSTOMER : ( !alerting_customer.isEmpty() ? ALERTING_CUSTOMER : GETTING_NEW_PARTS )) ;
 //        int min = 0;
 //        int max = 2;
 //        int range = max - min + 1;
@@ -175,6 +180,7 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      * Spend some time talking with Customer
      */
     public synchronized int talkToCustomer() {
+        GenericIO.writelnString("------>>>>> (Lounge) talkToCustomer function");
         Manager manager = ((Manager)Thread.currentThread());
         manager.setManagerState(Manager.State.ATTENDING_CUSTOMER);
 
@@ -193,7 +199,7 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
             try {
                 wait();
             } catch (InterruptedException ex) {
-                GenericIO.writelnString("talkWithCustomer - Manager thread was interrupted.");
+                GenericIO.writelnString("------------------------talkWithCustomer - Manager thread was interrupted.");
                 System.exit(1);
             }
         }
@@ -208,6 +214,7 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      * The customer spend some time talking with the Manager
      */
     public synchronized void talkWithManager() {
+        GenericIO.writelnString("------>>>>> (Lounge) talkWithManager function");
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.RECEPTION);
 
@@ -226,7 +233,7 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
             try {
                 wait();
             } catch (InterruptedException ex) {
-                GenericIO.writelnString("talkWithManager - One Customer thread was interrupted.");
+                GenericIO.writelnString("--------------------talkWithManager - One Customer thread was interrupted.");
                 System.exit(1);
             }
         }

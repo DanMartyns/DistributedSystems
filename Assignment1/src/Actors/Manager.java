@@ -144,8 +144,9 @@ public class Manager extends Thread {
                     supplierSite.goToSupplier();
                     supplierSite.storePart(); //Updated Status : Replenish Stock
                     break;
-                    
+                 
             }
+            break;
         }
     }
     /**

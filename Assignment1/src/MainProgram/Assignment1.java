@@ -77,7 +77,7 @@ public class Assignment1 {
         }
         
         
-        Manager thread_manager = new Manager(1, (ManagerLounge) lounge, (ManagerSupplierSite) supplierSite, (ManagerRepairArea) repairArea);
+        Manager thread_manager = new Manager(0, (ManagerLounge) lounge, (ManagerSupplierSite) supplierSite, (ManagerRepairArea) repairArea);
         //lunch run thread from manager
         thread_manager.start();
         
@@ -92,34 +92,42 @@ public class Assignment1 {
         /**
          * Wait for the end of simulation.
          */
-        
-        for (Customer customer : thread_customer) {
-            try{
-                customer.join();
-            }
-            catch(InterruptedException e){
-                GenericIO.writeString("Main Program - One thread of Customer was interrupted.");
-                System.exit(1);
-            }
-        }
-        
+      
         for (Mechanic mechanic : thread_mechanic) {
             try{
                 mechanic.join();
+                GenericIO.writelnString("Mechanic is dead!");
+
             }
             catch(InterruptedException e){
-                GenericIO.writeString("Main Program - One thread of Mechanic was interrupted.");
+                GenericIO.writelnString("Main Program - One thread of Mechanic was interrupted.");
                 System.exit(1);
             }
         }
         
         try{
             thread_manager.join();
+            GenericIO.writelnString("Manager is dead!");
+
         }
         catch(InterruptedException e){
-            GenericIO.writeString("Main Program - One thread of Manager was interrupted.");
+            GenericIO.writelnString("Main Program - One thread of Manager was interrupted.");
             System.exit(1);
         }
+        
+        for (Customer customer : thread_customer) {
+            try{
+                customer.join();
+                GenericIO.writelnString("Customer is dead!");
+
+            }
+            catch(InterruptedException e){
+                GenericIO.writelnString("Main Program - One thread of Customer was interrupted.");
+                System.exit(1);
+            }
+        }
+        
+        
         
     }
     

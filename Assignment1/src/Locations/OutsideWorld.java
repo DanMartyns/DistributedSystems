@@ -8,6 +8,7 @@ package Locations;
 import Actors.Customer;
 import Interfaces.CustomerOutSideWorld;
 import genclass.GenericIO;
+import static java.lang.Thread.sleep;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,14 +23,27 @@ public class OutsideWorld implements CustomerOutSideWorld {
         GenericIO.writelnString("------>>>>> (OutsideWorld) decideOnRepair function");
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);        
-        return Math.random() > 0.5;
+        //return Math.random() > 0.5;
+        return true;
+
     }
 
     public synchronized void backToWorkByCar() {
         GenericIO.writelnString("------>>>>> (OutsideWorld) backToWorkByCar function");
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            //assert customer.withCar() == false;
+
+            sleep(10);
+//        try {
+//            wait();
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(OutsideWorld.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+        } catch (InterruptedException ex) {
+            Logger.getLogger(OutsideWorld.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -40,10 +54,15 @@ public class OutsideWorld implements CustomerOutSideWorld {
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.NORMAL_LIFE_WITHOUT_CAR);
         
-        //assert customer.withCar() == false;
-        
         try {
-            wait();
+            //assert customer.withCar() == false;
+
+            sleep(10);
+//        try {
+//            wait();
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(OutsideWorld.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         } catch (InterruptedException ex) {
             Logger.getLogger(OutsideWorld.class.getName()).log(Level.SEVERE, null, ex);
         }

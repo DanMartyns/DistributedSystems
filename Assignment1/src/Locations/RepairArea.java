@@ -30,15 +30,15 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
     /**
      * number of A pieces
      */
-    private int pieceA = 5;
+    private int pieceA = 1000;
     /**
      * number of B pieces
      */
-    private int pieceB = 5;
+    private int pieceB = 1000;
     /**
      * number of C pieces
      */
-    private int pieceC = 5;
+    private int pieceC = 1000;
     
     /**
      * The mechanic remains in the "read paper" state, while the list is empty. If not, continue

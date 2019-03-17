@@ -98,7 +98,7 @@ public class Mechanic extends Thread {
     @Override
     public void run() {
         boolean partsInStock = true;
-        while(true){
+        //while(true){
             GenericIO.writelnString("Mechanics "+id+" is reading the paper");
             this.state = State.WAITING_FOR_WORK;
             repairArea.readThePaper();
@@ -139,7 +139,7 @@ public class Mechanic extends Thread {
             currentCarToRepair =  park.returnVehicle(carfixed);
             lounge.repairConcluded(currentCarToRepair);
 
-        }   
+       // }   
     }
     /**
      * Get the Mechanic state
