@@ -75,7 +75,7 @@ public class Assignment1 {
         for(int i=0; i<NUM_MECHANICS; i++)
             thread_mechanic[i] = new Mechanic(i, (MechanicsLounge) lounge, (MechanicsRepairArea) repairArea, (MechanicsPark) park);
         
-        Logger logger = new Logger(thread_manager, thread_mechanic, thread_customer,repairArea,lounge, park);
+        Logger logger = new Logger(thread_manager, thread_mechanic, thread_customer,repairArea,lounge, park, supplierSite);
         logger.initStateLog();
         logger.printHeaderLog();
         

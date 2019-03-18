@@ -11,6 +11,7 @@ import Actors.Mechanic;
 import Locations.Lounge;
 import Locations.Park;
 import Locations.RepairArea;
+import Locations.SupplierSite;
 import ProblemInformation.Constants;
 import genclass.GenericIO;
 
@@ -54,6 +55,11 @@ public class Logger implements LoggerInterface{
      * Park, where are the cars to arrange, the repaired and the substitution.
      */
     private final Park park;
+
+    /**
+     * Supplier Site, where the manager goes to a spare parts 
+     */
+    private final SupplierSite sp;
     
     /**
      * Logger constructor
@@ -65,13 +71,14 @@ public class Logger implements LoggerInterface{
      * @param lounge where customers will have the car repaired.
      * @param park where are the cars to arrange, the repaired and the substitution.
      */
-    public Logger(Manager manager, Mechanic[] mechanic, Customer[] customers, RepairArea repairArea, Lounge lounge, Park park){
+    public Logger(Manager manager, Mechanic[] mechanic, Customer[] customers, RepairArea repairArea, Lounge lounge, Park park, SupplierSite sp){
         this.manager = manager;
         this.mechanic = mechanic;
         this.customers = customers;
         this.repairArea = repairArea;
         this.lounge = lounge;
         this.park = park;
+        this.sp = sp;
     }
     
     /**
@@ -84,7 +91,8 @@ public class Logger implements LoggerInterface{
             FileWriter fw = new FileWriter(Constants.FILE_NAME);
             BufferedWriter bw = new BufferedWriter(fw);
 
-            bw.write("REPAIR SHOP ACTIVITIES - Description of the internal state of the problem");
+            bw.write("                                     REPAIR SHOP ACTIVITIES - Description of the internal state of the problem");
+            bw.newLine();
             bw.newLine();
             bw.close();
             fw.close();
@@ -104,7 +112,10 @@ public class Logger implements LoggerInterface{
             FileWriter fw = new FileWriter(Constants.FILE_NAME, true);
         
             BufferedWriter bw = new BufferedWriter(fw);
-
+            bw.write(" MAN");
+            bw.write(" MECHANIC");
+            bw.write("                                                                CUSTOMER");
+            bw.newLine();
             bw.write("Stat");
 
             for (Mechanic mechanic : mechanic) {
@@ -116,10 +127,42 @@ public class Logger implements LoggerInterface{
                 bw.write(" C" + String.format("%02d", customers[i].getID()));
                 bw.write(" P" + String.format("%02d", customers[i].getID()));   
                 bw.write(" R" + String.format("%02d", customers[i].getID()));
-                if((i+1)%10 == 0)
+                System.out.println((i+1)%10 == 0);
+                if((i+1)%10 == 0){
                     bw.newLine();
+                    bw.write("            ");
+                }
             }
-                        
+            bw.write("    LOUNGE");
+            bw.write("        PARK");
+            bw.write("                                     REPAIR AREA");
+            bw.write("                                   SUPPLIER SITE");            
+            
+            bw.newLine();
+            
+            bw.write("             ");
+            bw.write("InQ ");
+            bw.write("WtK ");
+            bw.write("NRV");
+            
+            bw.write("    ");
+            bw.write("NCV  "); 
+            bw.write("NPV ");
+            
+            bw.write("      ");
+            bw.write("NSRQ   ");
+            
+            for(int i=0; i< Constants.TYPE_PARTS; i++){
+                bw.write("Prt"+i+"  ");
+                bw.write("NV"+i+"  ");
+                bw.write("S"+i+"  ");                
+            }
+            
+            bw.write("                     ");
+            for(int i=0; i< Constants.TYPE_PARTS; i++)
+                bw.write("PP"+i+"   ");
+
+            
             bw.close();
             fw.close();
         }
