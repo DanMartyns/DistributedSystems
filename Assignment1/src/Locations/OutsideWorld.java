@@ -7,17 +7,21 @@ package Locations;
 
 import Actors.Customer;
 import Interfaces.CustomerOutSideWorld;
+import MainProgram.LoggerInterface;
 import genclass.GenericIO;
 import static java.lang.Thread.sleep;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * @author danielmartins
  * @author giselapinto
  */
 public class OutsideWorld implements CustomerOutSideWorld {
-     // lista com os costumers no outside
+    /**
+    * Logger class for debugging.
+    */
+    private LoggerInterface logger;
 
     public synchronized boolean decideOnRepair() {
         GenericIO.writelnString("------>>>>> (OutsideWorld) decideOnRepair function");
@@ -68,4 +72,12 @@ public class OutsideWorld implements CustomerOutSideWorld {
         }
         
     }
+
+    /**
+     * Set the current logger
+     * @param logger Logger to be used for the entity
+     */
+    public synchronized void setLogger(LoggerInterface logger){
+        this.logger = logger;
+    }    
 }

@@ -11,6 +11,7 @@ import Actors.Mechanic;
 import Interfaces.CustomerLounge;
 import Interfaces.ManagerLounge;
 import Interfaces.MechanicsLounge;
+import MainProgram.LoggerInterface;
 import static ProblemInformation.Constants.ALERTING_CUSTOMER;
 import static ProblemInformation.Constants.ATENDING_CUSTOMER;
 import static ProblemInformation.Constants.GETTING_NEW_PARTS;
@@ -25,6 +26,11 @@ import java.util.logging.Logger;
  * @author giselapinto
  */
 public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
+
+    /**
+     * Logger class for debugging.
+     */
+    private LoggerInterface logger;
     
     /**
      * Queue dedicated the service "ATENDING CUSTOMER".
@@ -292,6 +298,14 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
         
         alerting_customer.add(currentCar);
         notifyAll();
+    }
+    
+    /**
+     * Set the current logger
+     * @param logger Logger to be used for the entity
+     */
+    public synchronized void setLogger(LoggerInterface logger){
+        this.logger = logger;
     }
     
 }

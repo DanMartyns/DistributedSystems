@@ -9,6 +9,7 @@ import Actors.Customer;
 import Actors.Mechanic;
 import Interfaces.CustomerPark;
 import Interfaces.MechanicsPark;
+import MainProgram.LoggerInterface;
 import genclass.GenericIO;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -20,6 +21,12 @@ import java.util.logging.Logger;
  * @author giselapinto
  */
 public class Park implements CustomerPark, MechanicsPark{
+    
+    /**
+     * Logger class for debugging.
+     */
+    private LoggerInterface logger;
+    
     
     Queue<Integer> replacementCars = new LinkedList<Integer>() { 
         { 
@@ -157,4 +164,11 @@ public class Park implements CustomerPark, MechanicsPark{
         return vehicle;
     }
 
+    /**
+     * Set the current logger
+     * @param logger Logger to be used for the entity
+     */
+    public synchronized void setLogger(LoggerInterface logger){
+        this.logger = logger;
+    }    
 }

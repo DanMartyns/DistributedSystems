@@ -42,7 +42,7 @@ public class Assignment1 {
      *  @param args runtime arguments
     */
     public static void main(String[] args) {
-        
+
         //boolean replaceCar = false;
         int wantsReplaceCar = 0;
         
@@ -63,31 +63,33 @@ public class Assignment1 {
         //if 0-> NO else YES!!
         wantsReplaceCar = rand_replace.nextInt(1);
         
-        
         /** 
          * Start of Simulation.
          */    
        
         for(int i = 0; i<NUM_CUSTOMERS; i++)
-        {
-            
             thread_customer[i] = new Customer(i, (CustomerOutSideWorld) outsideWorld, i, (CustomerPark) park, (CustomerLounge) lounge);
-            //lunch run thread from customer
-            thread_customer[i].start();
-        }
-        
-        
+               
         Manager thread_manager = new Manager(0, (ManagerLounge) lounge, (ManagerSupplierSite) supplierSite, (ManagerRepairArea) repairArea);
-        //lunch run thread from manager
-        thread_manager.start();
-        
         
         for(int i=0; i<NUM_MECHANICS; i++)
-        {
             thread_mechanic[i] = new Mechanic(i, (MechanicsLounge) lounge, (MechanicsRepairArea) repairArea, (MechanicsPark) park);
-            //lunch run thread from mechainc
-            thread_mechanic[i].start();
-        }
+        
+        Logger logger = new Logger(thread_manager, thread_mechanic, thread_customer,repairArea,lounge, park);
+        logger.initStateLog();
+        logger.printHeaderLog();
+        
+        lounge.setLogger(logger);
+        park.setLogger(logger);
+        outsideWorld.setLogger(logger);
+        repairArea.setLogger(logger);
+        supplierSite.setLogger(logger);
+        
+        thread_manager.start();        
+        for(Customer c : thread_customer)
+            c.start();              
+        for(Mechanic m : thread_mechanic)
+            m.start();        
         
         /**
          * Wait for the end of simulation.

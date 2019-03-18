@@ -9,11 +9,10 @@ import Actors.Mechanic;
 import Actors.Manager;
 import Interfaces.ManagerRepairArea;
 import Interfaces.MechanicsRepairArea;
+import MainProgram.LoggerInterface;
 import genclass.GenericIO;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,6 +21,11 @@ import java.util.logging.Logger;
  * @author giselapinto
  */
 public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
+
+    /**
+     * Logger class for debugging.
+     */
+    private LoggerInterface logger;
     
     /**
      *
@@ -132,4 +136,12 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
         int fix_car = mechanic.getCurrentCarToRepair();
         return fix_car;
     }
+    
+    /**
+     * Set the current logger
+     * @param logger Logger to be used for the entity
+     */
+    public synchronized void setLogger(LoggerInterface logger){
+        this.logger = logger;
+    }    
 }

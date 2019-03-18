@@ -142,6 +142,13 @@ public class Mechanic extends Thread {
        // }   
     }
     /**
+     * Get the Mechanic ID
+     * @return mechanic's id
+     */
+    public int getID() {
+        return id;
+    }
+    /**
      * Get the Mechanic state
      * 
      * @return mechanic state

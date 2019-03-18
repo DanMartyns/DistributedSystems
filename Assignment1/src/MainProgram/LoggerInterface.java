@@ -9,6 +9,14 @@ package MainProgram;
  *
  * @author danielmartins
  */
-public class LoggerInterface {
+public interface LoggerInterface {
+    /**
+     * Cleans the log file and logs the description of the problem.
+     */
+    public void initStateLog(); 
     
+    /**
+     * Logs the header of the initial state of the entities.
+     */
+    public void printHeaderLog();    
 }

@@ -8,6 +8,7 @@ package Locations;
 import Actors.Manager;
 import Actors.Manager.State;
 import Interfaces.ManagerSupplierSite;
+import MainProgram.LoggerInterface;
 import genclass.GenericIO;
 
 /**
@@ -16,6 +17,11 @@ import genclass.GenericIO;
  */
 public class SupplierSite implements ManagerSupplierSite {
 
+    /**
+     * Logger class for debugging.
+     */
+    private LoggerInterface logger;
+    
     public synchronized void goToSupplier() {
         GenericIO.writelnString("------>>>>> (Supplier Site) goToSupplier function");
         Manager manager = ((Manager)Thread.currentThread());
@@ -30,5 +36,12 @@ public class SupplierSite implements ManagerSupplierSite {
         manager.setManagerState(Manager.State.REPLENISH_STOCK);        
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
+    /**
+     * Set the current logger
+     * @param logger Logger to be used for the entity
+     */
+    public synchronized void setLogger(LoggerInterface logger){
+        this.logger = logger;
+    }    
 }
