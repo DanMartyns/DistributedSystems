@@ -35,10 +35,5 @@ public interface ManagerLounge {
     /**
      * Hand Car Key (Lounge)
      */
-    public void handCarKey();
-    
-    /**
-     * Call the Customer (Lounge)
-     */
-    public void phoneCustomer();    
+    public void handCarKey();   
 }

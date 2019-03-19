@@ -56,7 +56,8 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
             try {
                 wait();
             } catch (InterruptedException ex) {
-                Logger.getLogger(RepairArea.class.getName()).log(Level.SEVERE, null, ex);
+                GenericIO.writelnString("readThePaper - Manager thread was interrupted.");
+                System.exit(1);
             }
         }
     }
@@ -81,8 +82,6 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
         int range = max - min + 1;
         CarsToBeRepaired.putIfAbsent(customer,(int) (Math.random() * range) + 1 );
         notifyAll();
-        
-        //return 1;
     }
 
     /**

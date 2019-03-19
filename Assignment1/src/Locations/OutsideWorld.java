@@ -6,29 +6,32 @@
 package Locations;
 
 import Actors.Customer;
+import Actors.Manager;
 import Interfaces.CustomerOutSideWorld;
+import Interfaces.ManagerOutsideWorld;
 import MainProgram.LoggerInterface;
 import genclass.GenericIO;
-import static java.lang.Thread.sleep;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author danielmartins
  * @author giselapinto
  */
-public class OutsideWorld implements CustomerOutSideWorld {
+public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
     /**
     * Logger class for debugging.
     */
     private LoggerInterface logger;
+    
+    /**
+    * Boolean variable "phoneCustomer" to wake the Customer from his normal life and go get the car.
+    */
+    private boolean phoneCustomer = false;
 
     public synchronized boolean decideOnRepair() {
         GenericIO.writelnString("------>>>>> (OutsideWorld) decideOnRepair function");
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);        
-        //return Math.random() > 0.5;
-        return true;
+        return Math.random() > 0.5;
 
     }
 
@@ -36,18 +39,16 @@ public class OutsideWorld implements CustomerOutSideWorld {
         GenericIO.writelnString("------>>>>> (OutsideWorld) backToWorkByCar function");
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);
-        try {
-            //assert customer.withCar() == false;
 
-            sleep(10);
-//        try {
-//            wait();
-//        } catch (InterruptedException ex) {
-//            Logger.getLogger(OutsideWorld.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        } catch (InterruptedException ex) {
-            Logger.getLogger(OutsideWorld.class.getName()).log(Level.SEVERE, null, ex);
+        if (phoneCustomer == false){
+            try {
+                wait();
+            } catch (InterruptedException ex) {
+                    GenericIO.writelnString("backToWorkByCar - Manager thread was interrupted.");
+            }            
         }
+
+        phoneCustomer = false;
     }
 
     /**
@@ -58,21 +59,26 @@ public class OutsideWorld implements CustomerOutSideWorld {
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.NORMAL_LIFE_WITHOUT_CAR);
         
-        try {
-            //assert customer.withCar() == false;
-
-            sleep(10);
-//        try {
-//            wait();
-//        } catch (InterruptedException ex) {
-//            Logger.getLogger(OutsideWorld.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        } catch (InterruptedException ex) {
-            Logger.getLogger(OutsideWorld.class.getName()).log(Level.SEVERE, null, ex);
+        if (phoneCustomer == false){
+            try {
+                wait();
+            } catch (InterruptedException ex) {
+                    GenericIO.writelnString("backToWorkByBus - Manager thread was interrupted.");
+            }            
         }
+
+        phoneCustomer = false;
         
     }
 
+    public synchronized void phoneCustomer() {
+        GenericIO.writelnString("------>>>>> (Lounge) phoneCustomer function");
+        Manager manager = ((Manager)Thread.currentThread());
+        manager.setManagerState(Manager.State.ALERTING_COSTUMER);
+        phoneCustomer = true;
+        notifyAll();
+
+    }    
     /**
      * Set the current logger
      * @param logger Logger to be used for the entity

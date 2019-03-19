@@ -11,7 +11,7 @@ import Interfaces.CustomerLounge;
 import Interfaces.CustomerOutSideWorld;
 import Interfaces.CustomerPark;
 import Interfaces.ManagerLounge;
-import Interfaces.ManagerOutSideWorld;
+import Interfaces.ManagerOutsideWorld;
 import Interfaces.ManagerRepairArea;
 import Interfaces.ManagerSupplierSite;
 import Interfaces.MechanicsLounge;

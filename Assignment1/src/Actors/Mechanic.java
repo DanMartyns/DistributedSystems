@@ -99,7 +99,7 @@ public class Mechanic extends Thread {
     public void run() {
         boolean partsInStock = true;
         int carfixed = 0;
-        while(carfixed<=30){
+        while(true){
             GenericIO.writelnString("Mechanics "+id+" is reading the paper");
             this.state = State.WAITING_FOR_WORK;
             repairArea.readThePaper();

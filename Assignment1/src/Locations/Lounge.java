@@ -18,8 +18,6 @@ import static ProblemInformation.Constants.GETTING_NEW_PARTS;
 import genclass.GenericIO;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author danielmartins
@@ -54,11 +52,6 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      * Variable that identifies the customer being serviced.
      */
     private int currentCustomer = 0;
-    
-    /**
-     * Boolean variable "phoneCustomer" to wake the Customer from his normal life and go get the car.
-     */
-    private boolean phoneCustomer = false;
 
     /**
      * The costumer go into the Lounge and waits for his turn
@@ -68,6 +61,10 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
 
         Customer customer = ((Customer)Thread.currentThread());
         customer.setCustomerState(Customer.State.RECEPTION);
+        
+        if(alerting_customer.contains(id))
+            alerting_customer.remove(id);
+        
         atending_customer.add(id);
         notifyAll();
     }
@@ -113,7 +110,7 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
             try {
                 wait();
             } catch (InterruptedException ex) {
-                GenericIO.writelnString("-------------->>>>> (Lounge) getNextTask - Manager thread was interrupted.");
+                GenericIO.writelnString("getNextTask - Manager thread was interrupted.");
                 System.exit(1);
             }
         } 
@@ -139,48 +136,6 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
         GenericIO.writelnString(" ----------->>>>> (Lounge)  Alerting Customer EMPTY ? "+alerting_customer.isEmpty());
         GenericIO.writelnString("------------->>>>> (Lounge)   Geting new parts EMPTY ? "+getting_new_parts.isEmpty());        
         return ( !atending_customer.isEmpty() ? ATENDING_CUSTOMER : ( !alerting_customer.isEmpty() ? ALERTING_CUSTOMER : GETTING_NEW_PARTS )) ;
-//        int min = 0;
-//        int max = 2;
-//        int range = max - min + 1;
-//        int result = 0;
-//        
-//        if (atending_customer.isEmpty()){
-//            min = 1;
-//            range = max - min + 1;
-//            result = (int) (Math.random() * range) + 1;
-//            GenericIO.writelnString("Result 1 :"+result);
-//            return result;
-//        }else if (alerting_customer.isEmpty()){
-//           double val = Math.random();
-//           if (val > 0.5){
-//                GenericIO.writelnString("Result 2 :"+ 2);
-//                return 2;
-//           }else{
-//                GenericIO.writelnString("Result 3 :"+ 0);
-//                return 0;
-//           }
-//
-//        }else if (getting_new_parts.isEmpty()){
-//            max = 1;
-//            range = max - min + 1; 
-//            result = (int) (Math.random() * range) + 1;
-//            GenericIO.writelnString("Result 4 :"+result);
-//            return result;
-//        }
-//        result = (int) (Math.random() * range) + 1;
-//        GenericIO.writelnString("Result 5 :"+result);
-//        return result;
-
-//          if(!atending_customer.isEmpty()){
-//              return ATENDING_CUSTOMER;
-//          }
-//          else if(!alerting_customer.isEmpty()){
-//              return ALERTING_CUSTOMER;
-//          } 
-//          else if(!getting_new_parts.isEmpty()){
-//              return GETTING_NEW_PARTS;
-//          }
-//          return ATENDING_CUSTOMER;
     }
     /**
      * Spend some time talking with Customer
@@ -251,25 +206,6 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
         Manager manager = ((Manager)Thread.currentThread());
         manager.setManagerState(Manager.State.ATTENDING_CUSTOMER);        
         //TODO
-    }
-    
-    public synchronized void phoneCustomer() {
-        GenericIO.writelnString("------>>>>> (Lounge) phoneCustomer function");
-        Manager manager = ((Manager)Thread.currentThread());
-        manager.setManagerState(Manager.State.ALERTING_COSTUMER);
-        if(phoneCustomer == false && !alerting_customer.isEmpty()){
-            phoneCustomer = true;
-            alerting_customer.poll();
-            notifyAll();
-        }
-        else{
-            try {
-                wait();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Lounge.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
     }
     
     public synchronized void receivePayment() {

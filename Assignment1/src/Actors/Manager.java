@@ -6,6 +6,7 @@
 package Actors;
 
 import Interfaces.ManagerLounge;
+import Interfaces.ManagerOutsideWorld;
 import Interfaces.ManagerRepairArea;
 import Interfaces.ManagerSupplierSite;
 import static ProblemInformation.Constants.ALERTING_CUSTOMER;
@@ -91,6 +92,8 @@ public class Manager extends Thread {
      */
     private ManagerRepairArea repairArea;
     
+    private ManagerOutsideWorld outsideWorld;
+    
     
     /**
      * Manager constructor
@@ -101,12 +104,13 @@ public class Manager extends Thread {
      * @param repairArea instance of the repair area
      */
     
-    public Manager(int id, ManagerLounge lounge, ManagerSupplierSite supplierSite, ManagerRepairArea repairArea) {
+    public Manager(int id, ManagerLounge lounge, ManagerSupplierSite supplierSite, ManagerRepairArea repairArea, ManagerOutsideWorld outsideWorld) {
         this.state = State.CHECKING_WHAT_TO_DO;
         this.id = id;
         this.lounge = lounge;
         this.supplierSite = supplierSite;
         this.repairArea = repairArea;
+        this.outsideWorld = outsideWorld;
         
     }
     /**
@@ -133,7 +137,7 @@ public class Manager extends Thread {
                 case ALERTING_CUSTOMER:
                     GenericIO.writelnString("Manager is alerting customer");
                     this.state = State.ALERTING_COSTUMER;
-                    lounge.phoneCustomer();
+                    outsideWorld.phoneCustomer();
                     lounge.getNextTask();
                     int customer1 = lounge.talkToCustomer();
                     lounge.receivePayment();

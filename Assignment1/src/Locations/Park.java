@@ -13,8 +13,7 @@ import MainProgram.LoggerInterface;
 import genclass.GenericIO;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import ProblemInformation.Constants;
 
 /**
  * @author danielmartins
@@ -51,6 +50,8 @@ public class Park implements CustomerPark, MechanicsPark{
 
     /**
      * The customer park the car in the park.
+     * In this state you can get in, customers who will repair a car, 
+     * and customers who will get the car after repair and who has a replacement car.
      */
     public synchronized void goToRepairShop() {
         GenericIO.writelnString("------>>>>> (Park) goToRepairShop function");
@@ -58,29 +59,34 @@ public class Park implements CustomerPark, MechanicsPark{
         customer.setCustomerState(Customer.State.PARK);
         
         /**
-         * If the car is repared and his current car is different from your car id, it means that the current car is a replacement car, he wait.
+         * If the car isn't repared and his current car is different from your car id, 
+         * it means that the current car is a replacement car, he waits.
          */
         if (!repairedCars.contains(customer.getCar()) && customer.getCurrentCar() != customer.getCar()){
             try {
                 wait();
-                /**
-                 * He give it back the replacement car.
-                 */
-                replacementCars.add(customer.getCurrentCar());
             } catch (InterruptedException ex) {
-                Logger.getLogger(Park.class.getName()).log(Level.SEVERE, null, ex);
+                GenericIO.writelnString("goToRepairShop - Customer thread was interrupted.");
+                System.exit(1);
             }
-        }else{
+        }else if ( repairedCars.contains(customer.getCar()) && customer.getCurrentCar() != customer.getCar() ){
             /**
-             * He park his car.
+             * If the car is repared and his current car is different from your car id, 
+             * it means that the current car is a replacement car, he wait.
+             */
+            replacementCars.add(customer.getCurrentCar());            
+        } else {
+            /**
+             * If it is not in the list of repared cars, it means that it is 
+             * a new client and therefore adds to the attendance list.
              */
             cars.add(customer.getCar());
         }
         
         /**
-         * Places a variable "current car" to 0.
+         * Places a variable "current car" to NUM_CUSTOMERS + 1. It means no car.
          */
-        customer.setCurrentCarID(0);
+        customer.setCurrentCarID(Constants.NUM_CUSTOMERS + 1);
     }
 
     /**
@@ -104,7 +110,8 @@ public class Park implements CustomerPark, MechanicsPark{
                  */
                 wait();
             } catch (InterruptedException ex) {
-                Logger.getLogger(Park.class.getName()).log(Level.SEVERE, null, ex);
+                GenericIO.writelnString("findCar - Customer thread was interrupted.");
+                System.exit(1);;
             }
         }
     }
