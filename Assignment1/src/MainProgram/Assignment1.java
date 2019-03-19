@@ -11,6 +11,7 @@ import Interfaces.CustomerLounge;
 import Interfaces.CustomerOutSideWorld;
 import Interfaces.CustomerPark;
 import Interfaces.ManagerLounge;
+import Interfaces.ManagerOutSideWorld;
 import Interfaces.ManagerRepairArea;
 import Interfaces.ManagerSupplierSite;
 import Interfaces.MechanicsLounge;
@@ -70,7 +71,7 @@ public class Assignment1 {
         for(int i = 0; i<NUM_CUSTOMERS; i++)
             thread_customer[i] = new Customer(i, (CustomerOutSideWorld) outsideWorld, i, (CustomerPark) park, (CustomerLounge) lounge);
                
-        Manager thread_manager = new Manager(0, (ManagerLounge) lounge, (ManagerSupplierSite) supplierSite, (ManagerRepairArea) repairArea);
+        Manager thread_manager = new Manager(0, (ManagerLounge) lounge, (ManagerSupplierSite) supplierSite, (ManagerRepairArea) repairArea, (ManagerOutsideWorld) outsideWorld);
         
         for(int i=0; i<NUM_MECHANICS; i++)
             thread_mechanic[i] = new Mechanic(i, (MechanicsLounge) lounge, (MechanicsRepairArea) repairArea, (MechanicsPark) park);
