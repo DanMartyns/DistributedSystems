@@ -98,7 +98,8 @@ public class Mechanic extends Thread {
     @Override
     public void run() {
         boolean partsInStock = true;
-        //while(true){
+        int carfixed = 0;
+        while(carfixed<=30){
             GenericIO.writelnString("Mechanics "+id+" is reading the paper");
             this.state = State.WAITING_FOR_WORK;
             repairArea.readThePaper();
@@ -129,17 +130,21 @@ public class Mechanic extends Thread {
             }
             GenericIO.writelnString("Mechanics "+id+" is fixing the car");
 
-            int carfixed = repairArea.fixIt();
+            carfixed = repairArea.fixIt();
             
             try {
-                sleep(5000);
+                sleep(10);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Mechanic.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
+            GenericIO.writelnString("Mechanics "+id+" is returning car");
             currentCarToRepair =  park.returnVehicle(carfixed);
+            
+            GenericIO.writelnString("Mechanics "+id+" repairConcluded");
             lounge.repairConcluded(currentCarToRepair);
 
-       // }   
+       }   
     }
     /**
      * Get the Mechanic ID

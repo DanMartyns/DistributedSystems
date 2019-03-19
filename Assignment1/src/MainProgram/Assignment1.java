@@ -94,6 +94,19 @@ public class Assignment1 {
         /**
          * Wait for the end of simulation.
          */
+        
+        for (Customer customer : thread_customer) {
+            try{
+                customer.join();
+                GenericIO.writelnString("Customer is dead!");
+
+            }
+            catch(InterruptedException e){
+                GenericIO.writelnString("Main Program - One thread of Customer was interrupted.");
+                System.exit(1);
+            }
+        }
+        
       
         for (Mechanic mechanic : thread_mechanic) {
             try{
@@ -117,17 +130,6 @@ public class Assignment1 {
             System.exit(1);
         }
         
-        for (Customer customer : thread_customer) {
-            try{
-                customer.join();
-                GenericIO.writelnString("Customer is dead!");
-
-            }
-            catch(InterruptedException e){
-                GenericIO.writelnString("Main Program - One thread of Customer was interrupted.");
-                System.exit(1);
-            }
-        }
         
         
         
