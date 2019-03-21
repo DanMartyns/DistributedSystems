@@ -1,11 +1,8 @@
 package Actors;
 
 import Interfaces.MechanicsLounge;
-import Interfaces.MechanicsPark;
 import Interfaces.MechanicsRepairArea;
 import genclass.GenericIO;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author giselapinto
@@ -58,19 +55,14 @@ public class Mechanic extends Thread {
     /**
      * Car currently being serviced
      */
-    private int currentCarToRepair = 0;
+    private String currentCar;
+    private String currentPiece;
     
    
     /**
      * Instance of the mechanics interface Repair Area.
      */    
     private MechanicsRepairArea repairArea;
-
-    /**
-     * Instance of the mechanics interface Park.
-     */
-    private MechanicsPark park;
-    
     
     /**
      * Instance of the mechanics interface lounge.
@@ -83,14 +75,12 @@ public class Mechanic extends Thread {
      * @param id identifier of the mechanic
      * @param lounge instance of the lounge
      * @param repairArea instance of the repair area
-     * @param park instance of the park
      */ 
-    public Mechanic(int id, MechanicsLounge lounge, MechanicsRepairArea repairArea, MechanicsPark park) {
+    public Mechanic(int id, MechanicsLounge lounge, MechanicsRepairArea repairArea) {
         this.state = State.WAITING_FOR_WORK;
         this.id = id;
         this.lounge = lounge;
         this.repairArea = repairArea;
-        this.park = park;
     
     }
     
@@ -103,46 +93,35 @@ public class Mechanic extends Thread {
             GenericIO.writelnString("Mechanics "+id+" is reading the paper");
             this.state = State.WAITING_FOR_WORK;
             repairArea.readThePaper();
-            repairArea.startRepairProcedure();
-            park.getVehicle();
+            currentCar = repairArea.startRepairProcedure();
+            repairArea.getVehicle();
 
-            if(!partsInStock){
-                GenericIO.writelnString("Mechanics "+id+" is requiring new parts");
+            GenericIO.writelnString("Mechanics "+id+" is requiring new parts");
+            currentPiece = repairArea.getRequiredPart();
 
-                repairArea.getRequiredPart();
-                
-                if (repairArea.partAvailable()){
-                    GenericIO.writelnString("Mechanics "+id+" is checking parts available");
+            if (repairArea.partAvailable()){
+                GenericIO.writelnString("Mechanics "+id+" is checking parts available");
 
-                    repairArea.resumeRepairProcedure();
-                }
+                repairArea.resumeRepairProcedure();
+            }
 
-                else {
-                    GenericIO.writelnString("Mechanics "+id+" is notifing manager");
+            else {
+                GenericIO.writelnString("Mechanics "+id+" is notifing manager");
 
-                    lounge.letManagerKnow();
-                    repairArea.readThePaper();
-                    repairArea.startRepairProcedure();
-                    park.getVehicle();
-                    
-
-                }
+                lounge.letManagerKnow();
+                repairArea.readThePaper();
+                repairArea.startRepairProcedure();
+                repairArea.getVehicle();
             }
             GenericIO.writelnString("Mechanics "+id+" is fixing the car");
 
-            carfixed = repairArea.fixIt();
-            
-            try {
-                sleep(10);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Mechanic.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            repairArea.fixIt();
             
             GenericIO.writelnString("Mechanics "+id+" is returning car");
-            currentCarToRepair =  park.returnVehicle(carfixed);
+            repairArea.returnVehicle(carfixed);
             
             GenericIO.writelnString("Mechanics "+id+" repairConcluded");
-            lounge.repairConcluded(currentCarToRepair);
+            lounge.repairConcluded(currentCar);
 
        }   
     }
@@ -168,19 +147,13 @@ public class Mechanic extends Thread {
     public void setMechanicState(State state){
         this.state = state;
     }
-    /**
-     * Get the car that is in the hands of the mechanic 
-     * @return the car id
-     */
-    public int getCurrentCarToRepair() {
-        return currentCarToRepair;
+
+    public String getCurrentCar() {
+        return currentCar;
     }
-    /**
-     * Set the car that is in the hands of the mechanic 
-     * @param currentCarToRepair 
-     */
-    public void setCurrentCarToRepair(int currentCarToRepair) {
-        this.currentCarToRepair = currentCarToRepair;
+
+    public String getCurrentPiece() {
+        return currentPiece;
     }
         
 } 

@@ -13,5 +13,10 @@ public interface ManagerRepairArea {
     /**
      * Register a Service (RepairArea)
      */
-    public void registerService(int customer);    
+    public void registerService(int customer);  
+    
+    /**
+     * Replace the pieces (RepairArea)
+     */
+    public void storePart(String peca, int quantidade);
 }

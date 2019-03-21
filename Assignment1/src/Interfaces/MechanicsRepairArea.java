@@ -16,20 +16,20 @@ public interface MechanicsRepairArea {
      * (Class RepairArea)
      * @return car id to procedue repair 
     */
-    void startRepairProcedure();
+    String startRepairProcedure();
     
  
     /**
      * Mechanics Fix the car
      * (Class RepairArea)
      */
-    int fixIt();
+    void fixIt();
  
     /**
      * If mechanics need a part, he goes to his supplier to get the required part
      * (Class RepairArea)
      */
-    void getRequiredPart();
+    String getRequiredPart();
     
     /**
      * Mechanics check if the part is available on his supplier
@@ -46,9 +46,20 @@ public interface MechanicsRepairArea {
     
     /**
      * Mechanics waits for service, reading the paper
-     * (Class Lounge)
+     * (Class RepairArea)
      */
     void readThePaper();   
     
- 
+     /**
+    * Mechanics get the car to repair
+    * (Class RepairArea)
+    */
+    void getVehicle();
+    
+    
+    /**
+    * Mechanics finish de repair procedure and let the car in the park
+    * (Class RepairArea)
+    */
+    int returnVehicle(int carId);
 }

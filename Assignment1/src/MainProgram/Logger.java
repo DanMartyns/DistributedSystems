@@ -127,7 +127,6 @@ public class Logger implements LoggerInterface{
                 bw.write(" C" + String.format("%02d", customers[i].getID()));
                 bw.write(" P" + String.format("%02d", customers[i].getID()));   
                 bw.write(" R" + String.format("%02d", customers[i].getID()));
-                System.out.println((i+1)%10 == 0);
                 if((i+1)%10 == 0){
                     bw.newLine();
                     bw.write("            ");

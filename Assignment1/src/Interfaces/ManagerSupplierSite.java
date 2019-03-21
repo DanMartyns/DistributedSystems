@@ -13,14 +13,9 @@ package Interfaces;
 public interface ManagerSupplierSite {
     
     /**
-     * Replace the pieces (SupplierSite)
-     */
-    public void storePart();
-    
-    /**
      * Go to Supplier (SupplierSite)
      */
-    public void goToSupplier();
+    public int goToSupplier(String peca);
     
     
 }

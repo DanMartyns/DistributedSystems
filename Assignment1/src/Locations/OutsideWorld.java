@@ -26,56 +26,76 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
     * Boolean variable "phoneCustomer" to wake the Customer from his normal life and go get the car.
     */
     private boolean phoneCustomer = false;
+    
+    private String currentCustomer;
+    
 
+    /**
+     * Decide whether to get the car or not.
+     * @return true or false, if he wants or not
+     */
     public synchronized boolean decideOnRepair() {
-        GenericIO.writelnString("------>>>>> (OutsideWorld) decideOnRepair function");
         Customer customer = ((Customer)Thread.currentThread());
+        GenericIO.writelnString(">>>>> (OutsideWorld) Customer "+customer.getID()+" - decideOnRepair function");
         customer.setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);        
-        return Math.random() > 0.5;
+        return true;//Math.random() > 0.5;
 
     }
 
-    public synchronized void backToWorkByCar() {
-        GenericIO.writelnString("------>>>>> (OutsideWorld) backToWorkByCar function");
-        Customer customer = ((Customer)Thread.currentThread());
-        customer.setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);
+    /**
+     * Get back to your normal life without a car. 
+     * It waits to be notified that your car is repaired.
+     */
+    public synchronized void backToWorkByBus(String info) {
+        GenericIO.writelnString(">>>>> (OutsideWorld) backToWorkByBus function");
 
+        System.out.println("backToWorkByBus : "+phoneCustomer);
+//        if (phoneCustomer == false){
+//            try {
+//                wait();
+//            } catch (InterruptedException ex) {
+//                    GenericIO.writelnString("backToWorkByBus - Manager thread was interrupted.");
+//            }            
+//        } 
+//        
+//        if( currentCustomer == customer.getID()){
+//            phoneCustomer = false;
+//        }
+        
+    }
+    /**
+     * Get back to your normal life with your car after it's fixed 
+     * or with a replacement car. If he is with a replacement car, 
+     * he waits to be notified that his car is repaired.
+     */
+    public synchronized void backToWorkByCar(String info) {
+        GenericIO.writelnString(">>>>> (OutsideWorld) backToWorkByCar function");
+
+        System.out.print(info);
         if (phoneCustomer == false){
             try {
+                System.out.println("Waiting for manager call");
                 wait();
             } catch (InterruptedException ex) {
                     GenericIO.writelnString("backToWorkByCar - Manager thread was interrupted.");
             }            
         }
-
-        phoneCustomer = false;
-    }
-
-    /**
-     * Waits for the repairment of the car
-     */
-    public synchronized void backToWorkByBus() {
-        GenericIO.writelnString("------>>>>> (OutsideWorld) backToWorkByBus function");
-        Customer customer = ((Customer)Thread.currentThread());
-        customer.setCustomerState(Customer.State.NORMAL_LIFE_WITHOUT_CAR);
         
-        if (phoneCustomer == false){
-            try {
-                wait();
-            } catch (InterruptedException ex) {
-                    GenericIO.writelnString("backToWorkByBus - Manager thread was interrupted.");
-            }            
+        if( currentCustomer.equals(info)){
+            phoneCustomer = false;
         }
 
-        phoneCustomer = false;
-        
     }
-
-    public synchronized void phoneCustomer() {
-        GenericIO.writelnString("------>>>>> (Lounge) phoneCustomer function");
+    /**
+     * Notifies customers that your car is repaired.
+     */
+    public synchronized void phoneCustomer(String id) {
+        GenericIO.writelnString(">>>>> (Lounge) phoneCustomer function");
         Manager manager = ((Manager)Thread.currentThread());
-        manager.setManagerState(Manager.State.ALERTING_COSTUMER);
+        manager.setManagerState(Manager.State.ALERTING_CUSTOMER);
         phoneCustomer = true;
+        currentCustomer = id;
+        System.out.println("phoneCustomer : "+phoneCustomer);
         notifyAll();
 
     }    

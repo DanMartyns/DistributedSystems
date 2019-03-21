@@ -20,12 +20,12 @@ public interface ManagerLounge {
      * Choose what is the new task (Lounge)
      * @return int 
      */
-    public int appraiseSit();
+    public String appraiseSit();
     
     /**
      * Talk to Customer (Lounge)
      */
-    public int talkToCustomer();
+    public void talkToCustomer();
     
     /**
      * Receive Payment (Lounge)
@@ -35,5 +35,5 @@ public interface ManagerLounge {
     /**
      * Hand Car Key (Lounge)
      */
-    public void handCarKey();   
+    public void handCarKey(String customer);   
 }

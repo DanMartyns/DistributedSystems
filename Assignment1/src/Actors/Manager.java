@@ -40,7 +40,7 @@ public class Manager extends Thread {
         /**
          * Supervising the race.
          */
-        ALERTING_COSTUMER ("Alert"),
+        ALERTING_CUSTOMER ("Alert"),
         
         /**
          * Replenish Stock.
@@ -122,35 +122,35 @@ public class Manager extends Thread {
 
         while(lounge.getNextTask()){
             GenericIO.writelnString("Manager is checking what to do");
-
             this.state = State.CHECKING_WHAT_TO_DO;
-            switch(lounge.appraiseSit()){
+            
+            String[] choice = lounge.appraiseSit().split("-");
+
+            if(choice[0].equals(ATENDING_CUSTOMER)){
                 
-                case ATENDING_CUSTOMER:
-                    GenericIO.writelnString("Manager is atending customer");
-                    this.state = State.ATTENDING_CUSTOMER;
-                    int costumer = lounge.talkToCustomer();
-                    lounge.handCarKey();
-                    //this.stateOfService = 
-                    repairArea.registerService(costumer); //Updated Status : Posting Job
-                    break;
-                case ALERTING_CUSTOMER:
-                    GenericIO.writelnString("Manager is alerting customer");
-                    this.state = State.ALERTING_COSTUMER;
-                    outsideWorld.phoneCustomer();
-                    lounge.getNextTask();
-                    int customer1 = lounge.talkToCustomer();
-                    lounge.receivePayment();
-                    break;
-                case GETTING_NEW_PARTS:
-                    GenericIO.writelnString("Manager is getting new parts");
-                    this.state = State.GETTING_NEW_PARTS;
-                    supplierSite.goToSupplier();
-                    supplierSite.storePart(); //Updated Status : Replenish Stock
-                    break;
-                 
+                GenericIO.writelnString("Manager is atending customer");
+                this.state = State.ATTENDING_CUSTOMER;
+                lounge.talkToCustomer();
+                lounge.handCarKey(choice[1]);
+                repairArea.registerService(Integer.parseInt(choice[1].split(",")[1])); //Updated Status : Posting Job
+                
+            } else if(choice[0].equals(ALERTING_CUSTOMER)){
+                
+                GenericIO.writelnString("Manager is alerting customer");
+                this.state = State.ALERTING_CUSTOMER;
+                outsideWorld.phoneCustomer(choice[1]);
+                lounge.getNextTask();
+                lounge.talkToCustomer();
+                lounge.receivePayment();
+            
+            } else if (choice[0].equals(GETTING_NEW_PARTS)){    
+                
+                GenericIO.writelnString("Manager is getting new parts");
+                this.state = State.GETTING_NEW_PARTS;
+                int quantidade = supplierSite.goToSupplier(choice[1]);
+                repairArea.storePart(choice[1], quantidade); //Updated Status : Replenish Stock
+            
             }
-            break;
         }
     }
     /**

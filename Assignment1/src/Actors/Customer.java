@@ -8,6 +8,7 @@ package Actors;
 import Interfaces.CustomerLounge;
 import Interfaces.CustomerOutSideWorld;
 import Interfaces.CustomerPark;
+import static ProblemInformation.Constants.NUM_CUSTOMERS;
 import genclass.GenericIO;
 
 /**
@@ -58,28 +59,11 @@ public class Customer extends Thread {
      */       
     private int id;
     
+    private String info;
     /**
      * State of the Customer.
      */    
     private State state;
-
-    /**
-     * Boolean to decide if will replace the car.
-     */
-    private boolean wantsReplaceCar;
-    
-    /**
-    * Identifier the car.
-    */
-    private int carID;
-    
-    /**
-     * Current Car
-     * If currentCar == carID, it means that the car in your possession is your car.
-     * else if currentCar == 0, it means he has no car in his possession.
-     * else if currentCar == -1 or -2 or -3, it means he has a replacement car in his possession.
-     */
-    private int currentCarID;
     
     /**
     * interface Customer Park.
@@ -96,8 +80,12 @@ public class Customer extends Thread {
     */ 
     private CustomerOutSideWorld outsideWorld;
     
+    /**
+     * 
+     */
+    private boolean wantsReplacementCar = true;//Math.random() > 0.5;
     
-   
+    
     /**
      * Mechanic constructor
      * 
@@ -107,56 +95,77 @@ public class Customer extends Thread {
      * @param lounge instance of the lounge
      */     
     public Customer(int id, CustomerOutSideWorld outsideWorld,int carID, CustomerPark park, CustomerLounge lounge) {
+        /**
+         * The client id is a string consisting of
+         * id = id.hisCar.currentCar.wantsCarOrNot.paidOrNot
+         * Example : 
+         * 1.1.1.0.0
+         */
+        /**
+        * Current Car
+        * If currentCar == carID, it means that the car in your possession is your car.
+        * else if currentCar == 0, it means he has no car in his possession.
+        * else if currentCar == -1 or -2 or -3, it means he has a replacement car in his possession.
+        */
+        
         this.id = id;
+        this.info = id+","+carID+","+carID+","+(wantsReplacementCar ? 1 : 0)+","+"0";
         this.state = State.NORMAL_LIFE_WITH_CAR;
-        this.carID = carID;
-        this.currentCarID = carID;
         this.outsideWorld = outsideWorld;
         this.park = park;
         this.lounge = lounge;
     }
     
     @Override
-    public void run() {
-        int keyForReplaceCar;
-        
+    public void run() {     
         if( !outsideWorld.decideOnRepair()){
             GenericIO.writelnString("Customer "+id+" decided not to fix the car.");
         } else {
             GenericIO.writelnString("Customer "+id+" decided to fix the car.");
-            GenericIO.writelnString("Customer "+id+" go to repair shop");
-            park.goToRepairShop(); //Change State to PARK
+            park.goToRepairShop(info);
+            setCustomerState(Customer.State.PARK);
+            setCurrentCar(info,""+(NUM_CUSTOMERS + 1)); // CurrentCar change to NUM_CUSTOMERS + 1, that means without car
             
-            GenericIO.writelnString("Customer "+id+" queueIn");
-            lounge.queueIn(id); //Change State to RECEPTION
+            lounge.queueIn(info);
+            setCustomerState(Customer.State.RECEPTION);
             
-            GenericIO.writelnString("Customer "+id+" talk with manager");
-            lounge.talkWithManager();
+            lounge.talkWithManager(info);
 
-            if(wantsReplaceCar){
-                GenericIO.writelnString("Customer "+id+" talk with manager");
+            if(wantsReplacementCar){
 
-                keyForReplaceCar = lounge.collectKey(); //Change State to WAITING_FOR_REPLACE_CAR
-                park.findCar(keyForReplaceCar);
-                GenericIO.writelnString("Customer "+id+" goes to work by car");
+                lounge.collectKey(info);
+                setCustomerState(Customer.State.WAITING_FOR_REPLACE_CAR);
+                
+                int replacementCar = park.findCar();
+                setCurrentCar(info,""+replacementCar);
+                setCustomerState(Customer.State.PARK);
 
-                outsideWorld.backToWorkByCar();
-                park.goToRepairShop();
+                outsideWorld.backToWorkByCar(info);
+                setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);
+                
+                park.goToRepairShop(info);
+                setCustomerState(Customer.State.PARK);
             }
 
             else {
-                GenericIO.writelnString("Customer "+id+" goes to work by bus");
-
-                outsideWorld.backToWorkByBus();
+                outsideWorld.backToWorkByBus(info);
+                setCustomerState(Customer.State.NORMAL_LIFE_WITHOUT_CAR);
             }
-            GenericIO.writelnString("Customer "+id+" back to lounge to get car");
 
-            lounge.queueIn(id);
+            lounge.queueIn(info);
+            setCustomerState(Customer.State.RECEPTION);
+            
             lounge.payForTheService();
+            
             park.collectCar();
-            outsideWorld.backToWorkByCar();
+            setCustomerState(Customer.State.PARK);
+            
+            
+            outsideWorld.backToWorkByCar(info);
+            setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);
         }
     }
+    
     /**
      * 
      * @return id of the Customer 
@@ -164,31 +173,6 @@ public class Customer extends Thread {
     public int getID(){
         return id;
     }
-    /**
-     * Get the Customer's car id
-     * 
-     * @return car id
-     */    
-    public int getCar() {
-        return carID;
-    }
-    
-    /**
-     * Get the Customer's current car id
-     * 
-     * @return car id
-     */     
-    public int getCurrentCar(){
-        return currentCarID;
-    }
-
-    /**
-     * Set the current car ID
-     * @param currentCarID 
-     */
-    public void setCurrentCarID(int currentCarID) {
-        this.currentCarID = currentCarID;
-    }    
     
     /**
      * Get the Customer's State
@@ -204,6 +188,12 @@ public class Customer extends Thread {
      */
     public void setCustomerState(State state){
         this.state = state;
+    }
+    
+    private void setCurrentCar(String id, String value){
+        String[] temp = id.split(",");
+        temp[2] = value;
+        this.info = String.join(",",temp);
     }
     
     

@@ -22,12 +22,11 @@ public interface CustomerPark {
      * customer go to repair shop
      * (Class Park)
      */
-    void goToRepairShop();
+    void goToRepairShop(String info);
     
     /**
      * customer find the replecment car on park
-     * @param keyForReplaceCar id from car
      * (Class Park)
      */
-    void findCar(long keyForReplaceCar);
+    int findCar();
 }

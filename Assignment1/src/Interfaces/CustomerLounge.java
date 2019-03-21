@@ -15,20 +15,19 @@ public interface CustomerLounge {
      * (Class Lounge)
      * @param id from customer
      */
-    void queueIn(int id);
+    void queueIn(String id);
     
     /**
      * customer talks with manager
      * (Class Lounge)
      */
-    void talkWithManager();
+    void talkWithManager(String info);
     
     /**
      * customer wants a replecement car so he need the key
-     * @return id from replecement car
      * (Class Lounge)
      */
-    int collectKey();
+    void collectKey(String info);
     
     /**
      * customer pay for the service to Manager

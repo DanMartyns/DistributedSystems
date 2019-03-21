@@ -1,0 +1,5 @@
+                                     REPAIR SHOP ACTIVITIES - Description of the internal state of the problem
+
+ MAN MECHANIC                                                                CUSTOMER
+Stat S00 C00 P00 R00    LOUNGE        PARK                                     REPAIR AREA                                   SUPPLIER SITE
+             InQ WtK NRV    NCV  NPV       NSRQ   Prt0  NV0  S0  Prt1  NV1  S1  Prt2  NV2  S2                       PP0   PP1   PP2   
