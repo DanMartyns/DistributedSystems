@@ -12,6 +12,7 @@ import Interfaces.ManagerSupplierSite;
 import static ProblemInformation.Constants.ALERTING_CUSTOMER;
 import static ProblemInformation.Constants.ATENDING_CUSTOMER;
 import static ProblemInformation.Constants.GETTING_NEW_PARTS;
+import static ProblemInformation.Constants.NUM_CUSTOMERS;
 import genclass.GenericIO;
 
 /**
@@ -118,38 +119,60 @@ public class Manager extends Thread {
      */ 
     @Override
     public void run(){
-        GenericIO.writelnString("Manager is alive");
+        GenericIO.writelnString("Manager is alive!");
 
         while(lounge.getNextTask()){
-            GenericIO.writelnString("Manager is checking what to do");
-            this.state = State.CHECKING_WHAT_TO_DO;
+            //GenericIO.writelnString("Manager is checking what to do");
+            setManagerState(Manager.State.ATTENDING_CUSTOMER);
             
-            String[] choice = lounge.appraiseSit().split("-");
+            String[] choice = lounge.appraiseSit().split("@");
 
             if(choice[0].equals(ATENDING_CUSTOMER)){
                 
                 GenericIO.writelnString("Manager is atending customer");
-                this.state = State.ATTENDING_CUSTOMER;
-                lounge.talkToCustomer();
-                lounge.handCarKey(choice[1]);
-                repairArea.registerService(Integer.parseInt(choice[1].split(",")[1])); //Updated Status : Posting Job
                 
+                lounge.talkToCustomer();
+                setManagerState(Manager.State.ATTENDING_CUSTOMER);
+                GenericIO.writelnString("Manager talk to customer.");
+                
+                lounge.handCarKey(choice[1]);
+                GenericIO.writelnString("Manager hand car key.");
+                
+                repairArea.registerService(Integer.parseInt(choice[1].split(",")[1])); //Updated Status : Posting Job
+                setManagerState(Manager.State.POSTING_JOB);
+                GenericIO.writelnString("Manager register service.");
             } else if(choice[0].equals(ALERTING_CUSTOMER)){
                 
                 GenericIO.writelnString("Manager is alerting customer");
-                this.state = State.ALERTING_CUSTOMER;
+                
                 outsideWorld.phoneCustomer(choice[1]);
+                setManagerState(Manager.State.ALERTING_CUSTOMER);
+                GenericIO.writelnString("Manager phone Customer");
+                
                 lounge.getNextTask();
+                setManagerState(Manager.State.ATTENDING_CUSTOMER);
+                GenericIO.writelnString("Manager get next task.");                
+                
                 lounge.talkToCustomer();
+                setManagerState(Manager.State.ATTENDING_CUSTOMER);
+                GenericIO.writelnString("Manager talk to customer.");                
+                
+                System.out.println("receivePayment info :"+choice[1]);
+                
                 lounge.receivePayment();
+                GenericIO.writelnString("Manager receive payment."); 
             
             } else if (choice[0].equals(GETTING_NEW_PARTS)){    
                 
                 GenericIO.writelnString("Manager is getting new parts");
-                this.state = State.GETTING_NEW_PARTS;
+
                 int quantidade = supplierSite.goToSupplier(choice[1]);
+                setManagerState(Manager.State.GETTING_NEW_PARTS);
+                GenericIO.writelnString("Manager go to supplier.");                
+                
                 repairArea.storePart(choice[1], quantidade); //Updated Status : Replenish Stock
-            
+                setManagerState(Manager.State.REPLENISH_STOCK);
+                GenericIO.writelnString("Manager store part.");  
             }
         }
     }

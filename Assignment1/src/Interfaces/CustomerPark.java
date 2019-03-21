@@ -15,7 +15,7 @@ public interface CustomerPark {
      * Customer collects the car that is already done
      * (Class Park)
      */
-    void collectCar();
+    void collectCar(int myCar);
     
     
     /**

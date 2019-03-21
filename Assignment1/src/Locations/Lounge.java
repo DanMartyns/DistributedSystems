@@ -13,8 +13,7 @@ import java.util.*;
 import static ProblemInformation.Constants.ALERTING_CUSTOMER;
 import static ProblemInformation.Constants.ATENDING_CUSTOMER;
 import static ProblemInformation.Constants.GETTING_NEW_PARTS;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import static ProblemInformation.Constants.NUM_CUSTOMERS;
 /**
  * @author danielmartins
  * @author giselapinto
@@ -27,13 +26,18 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
     private LoggerInterface logger;
     
     /**
+     * Number of Repaired Cars
+     */
+    private int numCustomers;
+    
+    /**
      * Queue dedicated the service "ATENDING CUSTOMER".
      */
     Queue<String> atending_customer = new LinkedList<>();
     /**
      * Queue dedicated the service "ALERTING CUSTOMER".
      */    
-    Queue<String> alerting_customer = new LinkedList<String>();
+    Queue<Integer> alerting_customer = new LinkedList<Integer>();
     /**
      * Queue dedicated the service "GETING NEW PARTS".
      */    
@@ -70,24 +74,23 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
       * As soon as they are not, they perform a task.
       * @return true, when the vectores are not empty
       */
-    public synchronized boolean getNextTask() {
-        GenericIO.writelnString(">>>>> (Lounge) Manager - getNextTask function");
+    public synchronized boolean getNextTask() {    
+        System.out.println("NumCustomers :"+numCustomers);
+        if(numCustomers < NUM_CUSTOMERS){
+            
+            while(atending_customer.isEmpty() && alerting_customer.isEmpty() && getting_new_parts.isEmpty()){ 
+                try {
+                    //GenericIO.writelnString("getNextTask - Waiting for new task."); 
+                    wait();
+                } catch (InterruptedException ex) {
+                    GenericIO.writelnString("getNextTask - Manager thread was interrupted.");
+                    System.exit(1);
+                }
+            } 
 
-        Manager manager = ((Manager)Thread.currentThread());
-        manager.setManagerState(Manager.State.CHECKING_WHAT_TO_DO);       
-       
-        
-        if(atending_customer.isEmpty() && alerting_customer.isEmpty() && getting_new_parts.isEmpty()){ 
-            try {
-                GenericIO.writelnString("getNextTask - Waiting for new task."); 
-                wait();
-            } catch (InterruptedException ex) {
-                GenericIO.writelnString("getNextTask - Manager thread was interrupted.");
-                System.exit(1);
-            }
-        } 
-
-        return true;
+            return true;
+        } else
+            return false;
          
     }    
 
@@ -107,15 +110,16 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
         Manager manager = ((Manager)Thread.currentThread());
         manager.setManagerState(Manager.State.CHECKING_WHAT_TO_DO);
         String choice;
-        alerting_customer.forEach((x) -> {System.out.println("alert"+x);});
+        
         if(!atending_customer.isEmpty()){ 
-            choice = ATENDING_CUSTOMER+"-"+atending_customer.poll();
-            currentCustomer = choice.split("-")[1].toString();
+            choice = ATENDING_CUSTOMER+"@"+atending_customer.poll();
+            currentCustomer = choice.split("@")[1].toString();
         }
         else if (!alerting_customer.isEmpty())
-            choice = ALERTING_CUSTOMER+"-"+alerting_customer.poll();
+            choice = ALERTING_CUSTOMER+"@"+alerting_customer.poll();
         else
-            choice = GETTING_NEW_PARTS+"-"+getting_new_parts.poll();
+            choice = GETTING_NEW_PARTS+"@"+getting_new_parts.poll();
+        System.out.println("Choice "+choice);
         return choice;
     }
     
@@ -123,7 +127,6 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      * The costumer go into the Lounge and waits for his turn
      */
     public synchronized void queueIn(String id) {
-        System.out.println("Customer "+id+" entrou na fila");
         atending_customer.add(id);
         notifyAll();
     }
@@ -133,7 +136,6 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      * In practical terms, synchronization will only be done using the key variable.
      */
     public synchronized void collectKey(String info) {    
-        GenericIO.writelnString(">>>>> (Lounge) customer - collectKey function");
         String[] inf = info.split(",");
         
         if(!inf[2].equals(currentCustomer) && key == false){
@@ -155,12 +157,10 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      * In practical terms, synchronization will only be done using the key variable.
      */
     public synchronized void handCarKey(String info) {
-        GenericIO.writelnString(">>>>> (Lounge) Manager - handCarKey function");
-        Manager manager = ((Manager)Thread.currentThread());
-        manager.setManagerState(Manager.State.ATTENDING_CUSTOMER);
 
         String[] inf = info.split(",");
-        if(inf[2].equals("1") && key == false){
+
+        if(inf[3].equals("1") && key == false){
             key = true;
             notifyAll();
         }
@@ -175,9 +175,6 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      * Remove this customer from the service queue.
      */
     public synchronized void talkToCustomer() {
-        GenericIO.writelnString(">>>>> (Lounge) talkToCustomer function");
-        Manager manager = ((Manager)Thread.currentThread());
-        manager.setManagerState(Manager.State.ATTENDING_CUSTOMER);
 
         /**
          * The manager starts a conversation by putting the "talk" variable to true
@@ -186,6 +183,7 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
             talk = true;
             notifyAll();
         }
+        
 
     }
     
@@ -197,7 +195,6 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      * yet and therefore expects the manager to respond.
      */
     public synchronized void talkWithManager(String info) {
-        GenericIO.writelnString(">>>>> (Lounge) talkToManager function");
         String[] inf = info.split(",");
         
         /**
@@ -228,65 +225,52 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      * meaning the collection of the payment.
      */
     public synchronized void receivePayment() {
-        GenericIO.writelnString(">>>>> (Lounge) receivePayment function");
-        Manager manager = ((Manager)Thread.currentThread());
-        manager.setManagerState(Manager.State.ATTENDING_CUSTOMER);
         
-//        if( pay == true ){
-//            pay = false;
-//            notifyAll();
-//        } else {
-//            try {
-//                wait();
-//            } catch (InterruptedException ex) {
-//                GenericIO.writelnString("receivePayment - Manager thread was interrupted.");
-//                System.exit(1);
-//            }
-//        }
+        while( pay == false ){
+            try {
+                wait();
+            } catch (InterruptedException ex) {
+                GenericIO.writelnString("receivePayment - Manager thread was interrupted.");
+                System.exit(1);
+            }
+        }
+        pay = false;
     }
     
     /**
      * In theoretical terms will effect the payment.
      * In practical terms, it is just a state of transition.
      */
-    public synchronized void payForTheService() {
+    public synchronized void payForTheService(String info) {
         
-//        if ( pay == false){
-//            pay = true;
-//            notifyAll();
-//        } else {
-//            try {
-//                wait();
-//            } catch (InterruptedException ex) {
-//                GenericIO.writelnString("payForTheService - Customer "+customer.getID()+" thread was interrupted.");
-//                System.exit(1);
-//            }
-//        }
+        String[] inf = info.split(",");
+        
+        if ( inf[4].equals("1")){
+            pay = true;
+            notifyAll();
+        }
     }    
     
     
     /*
     * Let manager know that the mechanics needs more pieces from supplier site
     */
-    public synchronized void letManagerKnow() {
-        GenericIO.writelnString(">>>>> (Lounge) letManagerKnow function");
-        Mechanic mechanic = ((Mechanic)Thread.currentThread());
-        mechanic.setMechanicState(Mechanic.State.ALERTING_MANAGER);
+    public synchronized void letManagerKnow(String peca) {
         
-//        getting_new_parts.add(mechanic.getCurrentPiece());
+        getting_new_parts.add(peca);
+        notifyAll();
+        getting_new_parts.forEach((x) -> {System.out.println("Inside Getting New Parts : "+x);});
     }
     
     /*
     * Notify the repair is concluded
     */
-    public synchronized void repairConcluded(String currentCar) {
-        GenericIO.writelnString(">>>>> (Lounge) repairConcluded function");
-        Mechanic mechanic = ((Mechanic)Thread.currentThread());
-        mechanic.setMechanicState(Mechanic.State.ALERTING_MANAGER);  
+    public synchronized void repairConcluded(int currentCar) {
         
-//        alerting_customer.add(currentCar);
-//        alerting_customer.forEach((x) -> {System.out.println("Inside Alerting_Customer : "+x);});
-//        notifyAll();
+        alerting_customer.add(currentCar);
+        notifyAll();
+        alerting_customer.forEach((x) -> {System.out.println("Inside Alerting_Customer : "+x);});
+        numCustomers++;        
     }
     
     /**

@@ -1,7 +1,9 @@
 package Actors;
 
 import Interfaces.MechanicsLounge;
+import Interfaces.MechanicsPark;
 import Interfaces.MechanicsRepairArea;
+import static ProblemInformation.Constants.NUM_CUSTOMERS;
 import genclass.GenericIO;
 
 /**
@@ -55,8 +57,9 @@ public class Mechanic extends Thread {
     /**
      * Car currently being serviced
      */
-    private String currentCar;
+    private int currentCar;
     private String currentPiece;
+    private int carFixed = 0;
     
    
     /**
@@ -68,6 +71,8 @@ public class Mechanic extends Thread {
      * Instance of the mechanics interface lounge.
      */
     private MechanicsLounge lounge;
+   
+    private MechanicsPark park;
     
     /**
      * Mechanic constructor
@@ -76,53 +81,77 @@ public class Mechanic extends Thread {
      * @param lounge instance of the lounge
      * @param repairArea instance of the repair area
      */ 
-    public Mechanic(int id, MechanicsLounge lounge, MechanicsRepairArea repairArea) {
+    public Mechanic(int id, MechanicsLounge lounge, MechanicsRepairArea repairArea, MechanicsPark park) {
         this.state = State.WAITING_FOR_WORK;
         this.id = id;
         this.lounge = lounge;
         this.repairArea = repairArea;
+        this.park = park;
     
     }
     
     
     @Override
     public void run() {
-        boolean partsInStock = true;
-        int carfixed = 0;
-        while(true){
-            GenericIO.writelnString("Mechanics "+id+" is reading the paper");
-            this.state = State.WAITING_FOR_WORK;
+
+        while(carFixed < NUM_CUSTOMERS){
+            //GenericIO.writelnString("Mechanics "+id+" is reading the paper");
+            setMechanicState(Mechanic.State.WAITING_FOR_WORK);
+
+            
             repairArea.readThePaper();
-            currentCar = repairArea.startRepairProcedure();
-            repairArea.getVehicle();
+            //GenericIO.writelnString("Mechanic "+id+" read paper.");            
+            repairArea.startRepairProcedure();
+            //GenericIO.writelnString("Mechanic "+id+" start procedure.");            
+            setMechanicState(Mechanic.State.FIXING_CAR);
+            
+            currentCar = repairArea.getVehicle();
+            //GenericIO.writelnString("Mechanic "+id+" get vehicle.");            
 
-            GenericIO.writelnString("Mechanics "+id+" is requiring new parts");
+            //GenericIO.writelnString("Mechanics "+id+" is requiring new parts");
             currentPiece = repairArea.getRequiredPart();
+            setMechanicState(Mechanic.State.CHECKING_STOCK);
+            //GenericIO.writelnString("Mechanic "+id+" get required part.");            
 
-            if (repairArea.partAvailable()){
-                GenericIO.writelnString("Mechanics "+id+" is checking parts available");
+            if (repairArea.partAvailable(currentPiece, currentCar)){
+                //GenericIO.writelnString("Mechanics "+id+" is checking parts available");
 
-                repairArea.resumeRepairProcedure();
+                repairArea.resumeRepairProcedure(currentPiece);
+                setMechanicState(Mechanic.State.FIXING_CAR);
+                //GenericIO.writelnString("Mechanic "+id+" resume repair procedure.");                
             }
 
             else {
-                GenericIO.writelnString("Mechanics "+id+" is notifing manager");
+                //GenericIO.writelnString("Mechanics "+id+" is notifing manager");
 
-                lounge.letManagerKnow();
+                lounge.letManagerKnow(currentPiece);
+                setMechanicState(Mechanic.State.ALERTING_MANAGER);
+                //GenericIO.writelnString("Mechanic "+id+" let manager know.");                
+                
                 repairArea.readThePaper();
+                setMechanicState(Mechanic.State.WAITING_FOR_WORK);
+                //GenericIO.writelnString("Mechanic "+id+" read paper.");
+                
                 repairArea.startRepairProcedure();
-                repairArea.getVehicle();
+                setMechanicState(Mechanic.State.FIXING_CAR);
+                //GenericIO.writelnString("Mechanic "+id+" start repair procedure.");
+                
+                currentCar = repairArea.getVehicle();
+                //GenericIO.writelnString("Mechanic "+id+" get vehicle.");            
             }
-            GenericIO.writelnString("Mechanics "+id+" is fixing the car");
+
 
             repairArea.fixIt();
-            
-            GenericIO.writelnString("Mechanics "+id+" is returning car");
-            repairArea.returnVehicle(carfixed);
-            
-            GenericIO.writelnString("Mechanics "+id+" repairConcluded");
-            lounge.repairConcluded(currentCar);
+            GenericIO.writelnString("Mechanics "+id+" is fixing the car");            
+            carFixed++;
 
+            park.returnVehicle(currentCar);
+            GenericIO.writelnString("Mechanics "+id+" is returning car");
+            
+
+            lounge.repairConcluded(currentCar);
+            setMechanicState(Mechanic.State.ALERTING_MANAGER);
+            GenericIO.writelnString("Mechanics "+id+" repairConcluded");
        }   
     }
     /**
@@ -148,7 +177,7 @@ public class Mechanic extends Thread {
         this.state = state;
     }
 
-    public String getCurrentCar() {
+    public int getCurrentCar() {
         return currentCar;
     }
 

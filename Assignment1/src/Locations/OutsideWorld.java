@@ -34,10 +34,7 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
      * Decide whether to get the car or not.
      * @return true or false, if he wants or not
      */
-    public synchronized boolean decideOnRepair() {
-        Customer customer = ((Customer)Thread.currentThread());
-        GenericIO.writelnString(">>>>> (OutsideWorld) Customer "+customer.getID()+" - decideOnRepair function");
-        customer.setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);        
+    public synchronized boolean decideOnRepair() {      
         return true;//Math.random() > 0.5;
 
     }
@@ -47,7 +44,6 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
      * It waits to be notified that your car is repaired.
      */
     public synchronized void backToWorkByBus(String info) {
-        GenericIO.writelnString(">>>>> (OutsideWorld) backToWorkByBus function");
 
         System.out.println("backToWorkByBus : "+phoneCustomer);
 //        if (phoneCustomer == false){
@@ -69,9 +65,7 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
      * he waits to be notified that his car is repaired.
      */
     public synchronized void backToWorkByCar(String info) {
-        GenericIO.writelnString(">>>>> (OutsideWorld) backToWorkByCar function");
 
-        System.out.print(info);
         if (phoneCustomer == false){
             try {
                 System.out.println("Waiting for manager call");
@@ -81,7 +75,7 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
             }            
         }
         
-        if( currentCustomer.equals(info)){
+        if( currentCustomer.equals(info) && phoneCustomer == true){
             phoneCustomer = false;
         }
 
@@ -90,7 +84,6 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
      * Notifies customers that your car is repaired.
      */
     public synchronized void phoneCustomer(String id) {
-        GenericIO.writelnString(">>>>> (Lounge) phoneCustomer function");
         Manager manager = ((Manager)Thread.currentThread());
         manager.setManagerState(Manager.State.ALERTING_CUSTOMER);
         phoneCustomer = true;

@@ -5,12 +5,11 @@
  */
 package Locations;
 
-import Actors.Mechanic;
-import Actors.Manager;
 import Interfaces.ManagerRepairArea;
 import Interfaces.MechanicsRepairArea;
 import MainProgram.LoggerInterface;
 import ProblemInformation.Constants;
+import static ProblemInformation.Constants.NUM_CUSTOMERS;
 import genclass.GenericIO;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -24,42 +23,35 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
      * Logger class for debugging.
      */
     private LoggerInterface logger;
-    
-    /**
-     *
-     */
-    private Queue<Integer> cars = new LinkedList<>();
 
+    /**
+     * The queue of cars parked.
+     */
+    private Queue<Integer> cars = new LinkedList<>();    
+
+    
     /** 
      * Row of carss blocked for lack of parts.
      */ 
     private Queue<Integer> blockedCars = new LinkedList<>();
     
-    /**
-     * Queue of repaired cars.
-     */
-    private Queue<Integer> repairedCars = new LinkedList<>();    
+    
+    private int numCustomers = 0;
+
     /**
      * The mechanic remains in the "read paper" state, while the list is empty. If not, continue
-     */
-    
-    private int numCarsRepair = 0;
-    
-    public synchronized void readThePaper() {
+     */    
+    public synchronized int readThePaper() {        
         
-        Mechanic mechanic = ((Mechanic)Thread.currentThread());
-        GenericIO.writelnString(">>>>> (RepairArea) Mechanic "+mechanic.getID()+" - readThePaper function");
-        mechanic.setMechanicState(Mechanic.State.WAITING_FOR_WORK);         
-        
-//        if ( cars.isEmpty() ){
-//            try {
-//                wait();
-//            } catch (InterruptedException ex) {
-//                GenericIO.writelnString("readThePaper - Manager thread was interrupted.");
-//                System.exit(1);
-//            }
-//        }
-        //return numCarsRepair;
+        if ( cars.isEmpty() && blockedCars.isEmpty() ){
+            try {
+                wait();
+            } catch (InterruptedException ex) {
+                GenericIO.writelnString("readThePaper - Mechanic thread was interrupted.");
+                System.exit(1);
+            }
+        }
+        return numCustomers;
     }
     
     /**
@@ -67,9 +59,6 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
      * @param customer 
      */
     public synchronized void registerService(int customer) {
-        GenericIO.writelnString(">>>>> (RepairArea) registerService function");
-        Manager manager = ((Manager)Thread.currentThread());
-        manager.setManagerState(Manager.State.POSTING_JOB);
       
         /**
          * Register a service, means register the customer id with a random piece
@@ -88,73 +77,55 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
      * In terms of simulation, it does no useful work. 
      * Transition state
      */
-    public synchronized String startRepairProcedure() {
-        GenericIO.writelnString(">>>>> (RepairArea) startRepairProcedure function");
-        Mechanic mechanic = ((Mechanic)Thread.currentThread());
-        mechanic.setMechanicState(Mechanic.State.FIXING_CAR);
-//        GenericIO.writelnString("Serviços começados : ");
+    public synchronized void startRepairProcedure() {
+        GenericIO.writelnString("Serviços começados");
 //        cars.forEach((x) -> { GenericIO.writelnString("Customer : "+x.toString()); });         
 //        return ""+cars.poll();
-        return "";
     }
 
     /*
     * Getting new pieces
     */
-    public synchronized String getRequiredPart() {
-        GenericIO.writelnString(">>>>> (RepairArea) getRequiredPart function");
-        Mechanic mechanic = ((Mechanic)Thread.currentThread());
-        mechanic.setMechanicState(Mechanic.State.CHECKING_STOCK);
+    public synchronized String getRequiredPart() {       
         
-//        int min = 0;
-//        int max = 2;
-//        int range = max - min + 1;
-//        return ""+(Math.random() * range);
-        return "";
+        int min = 0;
+        int max = 2;
+        return ""+(int)(Math.random() * ((max) + 1));
     }
 
     /*
     * Checking the stock repetily
     * @return if mechanics has parts with him or not
     */
-    public synchronized boolean partAvailable() {
-        GenericIO.writelnString(">>>>> (RepairArea) partAvailable function");
-        Mechanic mechanic = ((Mechanic)Thread.currentThread());
-        mechanic.setMechanicState(Mechanic.State.CHECKING_STOCK);
+    public synchronized boolean partAvailable(String piece, int car) {       
         
-//        return (mechanic.getCurrentPiece() == "0" && pieceA > 0 || mechanic.getCurrentPiece() == "1" && pieceB > 0 || mechanic.getCurrentPiece() == "2" && pieceC > 0);
-        return true;
+        if ((piece.equals("0") && Constants.pieceA > 0 || piece.equals("1") && Constants.pieceB > 0 || piece.equals("2") && Constants.pieceC > 0) == false ){
+            blockedCars.add(car);
+            return false;
+        } else
+            return true;
     }
     /*
     * Back to fix
     */
-    public synchronized void resumeRepairProcedure() {
-        GenericIO.writelnString(">>>>> (RepairArea) resumeRepairProcedure function");
-        Mechanic mechanic = ((Mechanic)Thread.currentThread());
-        mechanic.setMechanicState(Mechanic.State.FIXING_CAR);
+    public synchronized void resumeRepairProcedure(String piece) {
         
-//        if (mechanic.getCurrentPiece() == "0" )
-//            pieceA--;
-//        if (mechanic.getCurrentPiece() == "1" )
-//            pieceB--;
-//        if (mechanic.getCurrentPiece() == "2" )
-//            pieceC--;
+        if (piece.equals("0") )
+            Constants.pieceA--;
+        if (piece.equals("1") )
+            Constants.pieceB--;
+        if (piece.equals("2") )
+            Constants.pieceC--;      
     }
 
     /*
     * Process the fix the car from customer
     */
-    public synchronized void fixIt() {
-        GenericIO.writelnString(">>>>> (RepairArea) fixIt function");
-        Mechanic mechanic = ((Mechanic)Thread.currentThread());
-        mechanic.setMechanicState(Mechanic.State.FIXING_CAR);
+    public synchronized void fixIt() {;        
 
     }
     
-    public synchronized void storePart(String peca, int quantidade) {
-        GenericIO.writelnString(">>>>> (Supplier Site) storePart function");
-        Manager manager = ((Manager)Thread.currentThread());
-        manager.setManagerState(Manager.State.REPLENISH_STOCK);        
+    public synchronized void storePart(String peca, int quantidade) {  
         
         if ( peca.equals("0") )
             Constants.pieceA = Constants.pieceA + quantidade;
@@ -167,39 +138,27 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
     /**
      * Method used by the mechanic to get the car to be repaired
      */
-    public synchronized void getVehicle() {
-        GenericIO.writelnString(">>>>> (Park) getVehicle function");
-        Mechanic mechanic = ((Mechanic)Thread.currentThread());
-        mechanic.setMechanicState(Mechanic.State.FIXING_CAR);
+    public synchronized int getVehicle() {
         
-//        GenericIO.writelnString("Lista de carros estacionados : ");
-//        cars.forEach((x) -> { GenericIO.writelnString(x.toString()); });
-//        GenericIO.writelnString("Lista de carros bloqueados : ");
-//        blockedCars.forEach((x) -> { GenericIO.writelnString(x.toString()); });          
-//        /**
-//         * In terms of simulation, the mechanic pulls the vehicle out of the "blocksCars" queue if it is not empty or the car's queue.
-//         */
-//        if (!blockedCars.isEmpty()){
-//            blockedCars.poll();
-//        } 
-//        if (!cars.isEmpty()) {
-//            cars.poll();
-//        }
+        GenericIO.writelnString("Lista de carros estacionados : ");
+        cars.forEach((x) -> { GenericIO.writelnString(x.toString()); });
+        GenericIO.writelnString("Lista de carros bloqueados : ");
+        blockedCars.forEach((x) -> { GenericIO.writelnString(x.toString()); });          
+        assert !blockedCars.isEmpty() || !cars.isEmpty();
         
+        int carToBeRepaired = 0;
+        /**
+         * In terms of simulation, the mechanic pulls the vehicle out of the "blocksCars" queue if it is not empty or the car's queue.
+         */
+        if (!blockedCars.isEmpty() ){
+            carToBeRepaired = blockedCars.poll();
+        } 
+        if (!cars.isEmpty()) {
+            carToBeRepaired = cars.poll();
+        }
+        return carToBeRepaired;
     }
-    /**
-     * 
-     * @return 
-     */
-    public synchronized int returnVehicle(int carId) {
-        GenericIO.writelnString(">>>>> (Park) returnVehicle function");
-        Mechanic mechanic = ((Mechanic)Thread.currentThread());
-        mechanic.setMechanicState(Mechanic.State.FIXING_CAR);
-//        int vehicle = mechanic.getCurrentCarToRepair();
-//        mechanic.setCurrentCarToRepair(Constants.NUM_CUSTOMERS+1);
-//        return vehicle;
-        return 1;
-    }    
+    
     /**
      * Set the current logger
      * @param logger Logger to be used for the entity

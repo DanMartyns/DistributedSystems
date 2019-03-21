@@ -15,6 +15,7 @@ import Interfaces.ManagerOutsideWorld;
 import Interfaces.ManagerRepairArea;
 import Interfaces.ManagerSupplierSite;
 import Interfaces.MechanicsLounge;
+import Interfaces.MechanicsPark;
 import Interfaces.MechanicsRepairArea;
 import Locations.Lounge;
 import Locations.OutsideWorld;
@@ -42,9 +43,6 @@ public class Assignment1 {
      *  @param args runtime arguments
     */
     public static void main(String[] args) {
-
-        //boolean replaceCar = false;
-        int wantsReplaceCar = 0;
         
         /**
          * Problem Initialization.
@@ -57,11 +55,6 @@ public class Assignment1 {
         
         Customer[] thread_customer = new Customer[NUM_CUSTOMERS];
         Mechanic[] thread_mechanic = new Mechanic[NUM_MECHANICS];
-
-        //random to choose if customer wants a replacement car or not
-        Random rand_replace = new Random();
-        //if 0-> NO else YES!!
-        wantsReplaceCar = rand_replace.nextInt(1);
         
         /** 
          * Start of Simulation.
@@ -73,7 +66,7 @@ public class Assignment1 {
         Manager thread_manager = new Manager(0, (ManagerLounge) lounge, (ManagerSupplierSite) supplierSite, (ManagerRepairArea) repairArea, (ManagerOutsideWorld) outsideWorld);
         
         for(int i=0; i<NUM_MECHANICS; i++)
-            thread_mechanic[i] = new Mechanic(i, (MechanicsLounge) lounge, (MechanicsRepairArea) repairArea);
+            thread_mechanic[i] = new Mechanic(i, (MechanicsLounge) lounge, (MechanicsRepairArea) repairArea, (MechanicsPark) park);
         
         Logger logger = new Logger(thread_manager, thread_mechanic, thread_customer,repairArea,lounge, park, supplierSite);
         logger.initStateLog();

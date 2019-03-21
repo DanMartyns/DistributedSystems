@@ -14,11 +14,11 @@ public interface MechanicsLounge {
     /**
     * Let manager know that the mechanics needs more pieces from supplier site
     */
-    void letManagerKnow();
+    void letManagerKnow(String currentPiece);
     
     /**
     * Notify the repair is concluded
     */
-    void repairConcluded(String currentCar);
+    void repairConcluded(int currentCar);
     
 }

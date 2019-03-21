@@ -33,7 +33,7 @@ public interface CustomerLounge {
      * customer pay for the service to Manager
      * (Class Lounge)
      */
-    void payForTheService();
+    void payForTheService(String info);
     
     
 }

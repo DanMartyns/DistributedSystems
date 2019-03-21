@@ -22,15 +22,18 @@ public class SupplierSite implements ManagerSupplierSite {
      */
     private LoggerInterface logger;
     
+    private int[] sendingPieces = new int[3];
+    
     public synchronized int goToSupplier(String peca) {
-        GenericIO.writelnString(">>>>> (Supplier Site) goToSupplier function");
         Manager manager = ((Manager)Thread.currentThread());
         manager.setManagerState(State.GETTING_NEW_PARTS);
         
         int min = 1;
         int max = 9;
         int range = max - min + 1;
-        return (int) (Math.random() * range);
+        int result = (int) (Math.random() * range);
+        this.sendingPieces[Integer.parseInt(peca)] = result;
+        return result;
     }
     
 

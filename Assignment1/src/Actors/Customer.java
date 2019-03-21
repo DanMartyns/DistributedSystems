@@ -128,41 +128,52 @@ public class Customer extends Thread {
             
             lounge.queueIn(info);
             setCustomerState(Customer.State.RECEPTION);
-            
+            GenericIO.writelnString("Customer "+id+" queueIn.");
             lounge.talkWithManager(info);
-
+            GenericIO.writelnString("Customer "+id+" talk to Manager.");
             if(wantsReplacementCar){
 
                 lounge.collectKey(info);
                 setCustomerState(Customer.State.WAITING_FOR_REPLACE_CAR);
-                
+                GenericIO.writelnString("Customer "+id+" collect key.");
                 int replacementCar = park.findCar();
                 setCurrentCar(info,""+replacementCar);
                 setCustomerState(Customer.State.PARK);
+                GenericIO.writelnString("Customer "+id+" find Car.");
 
                 outsideWorld.backToWorkByCar(info);
                 setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);
+                setPay(info,"1");
+                GenericIO.writelnString("Customer "+id+" back To work by car.");
                 
                 park.goToRepairShop(info);
                 setCustomerState(Customer.State.PARK);
+                GenericIO.writelnString("Customer "+id+" go to repaired shop.");
             }
 
             else {
                 outsideWorld.backToWorkByBus(info);
                 setCustomerState(Customer.State.NORMAL_LIFE_WITHOUT_CAR);
+                GenericIO.writelnString("Customer "+id+" back to work by bus.");
             }
 
             lounge.queueIn(info);
             setCustomerState(Customer.State.RECEPTION);
+            GenericIO.writelnString("Customer "+id+" queue in.");
             
-            lounge.payForTheService();
+            lounge.payForTheService(info);
+            GenericIO.writelnString("Customer "+id+" pay for the service.");
+            setPay(info,"0");
             
-            park.collectCar();
+            park.collectCar(this.id);
             setCustomerState(Customer.State.PARK);
+            setCurrentCar(info,""+this.id);
+            GenericIO.writelnString("Customer "+id+" collect Car.");
             
             
             outsideWorld.backToWorkByCar(info);
             setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);
+            GenericIO.writelnString("Customer "+id+" back to work by car.");
         }
     }
     
@@ -195,6 +206,11 @@ public class Customer extends Thread {
         temp[2] = value;
         this.info = String.join(",",temp);
     }
-    
+
+    private void setPay(String id, String value){
+        String[] temp = id.split(",");
+        temp[4] = value;
+        this.info = String.join(",",temp);
+    }    
     
 }

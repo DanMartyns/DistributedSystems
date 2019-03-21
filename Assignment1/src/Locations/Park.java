@@ -5,20 +5,19 @@
  */
 package Locations;
 
-import Actors.Customer;
 import Interfaces.CustomerPark;
+import Interfaces.MechanicsPark;
 import MainProgram.LoggerInterface;
+import static ProblemInformation.Constants.NUM_CUSTOMERS;
 import genclass.GenericIO;
 import java.util.LinkedList;
 import java.util.Queue;
-import ProblemInformation.Constants;
-import java.util.Arrays;
 
 /**
  * @author danielmartins
  * @author giselapinto
  */
-public class Park implements CustomerPark {
+public class Park implements CustomerPark, MechanicsPark{
     
     /**
      * Logger class for debugging.
@@ -37,7 +36,11 @@ public class Park implements CustomerPark {
      * The queue of cars parked.
      */
     private Queue<Integer> cars = new LinkedList<>();    
-
+    /**
+     * Queue of repaired cars.
+     */
+    private Queue<Integer> repairedCars = new LinkedList<>();  
+    
     /**
      * The customer park the car in the park.
      * In this state you can get in, 
@@ -48,25 +51,15 @@ public class Park implements CustomerPark {
         /**
          * id.carId.currentCar.wantsCar.paid
          */
+        
         String[] inf = info.split(",");
-
         /**
          * If his current car is different from your car id, 
          * it means that the current car is a replacement car, he waits.
          */
-        if ( !inf[2].equals(inf[1]) ){
-            try {
-                wait();
-            } catch (InterruptedException ex) {
-                GenericIO.writelnString("goToRepairShop - Customer thread was interrupted.");
-                System.exit(1);
-            }
-            /**
-             * After waiting, he returns the replacement car.
-             */
+        if ( inf[2].equals(inf[1]) == false ){
             replacementCars.add(Integer.parseInt(inf[2])); 
         }
-
         /**
          * If the car is repared and his current car is different from your car id, 
          * it means that the current car is a replacement car, he wait.
@@ -83,9 +76,6 @@ public class Park implements CustomerPark {
      * Method used by the customer to search for a replacement car
      */
     public synchronized int findCar() {
-        GenericIO.writelnString(">>>>> (Park) findCar function");
-        Customer customer = ((Customer)Thread.currentThread());
-        customer.setCustomerState(Customer.State.PARK);
         
         /**
          * If the list of replacement car is not empty, he give a car to the customer.
@@ -99,7 +89,7 @@ public class Park implements CustomerPark {
                 wait();
             } catch (InterruptedException ex) {
                 GenericIO.writelnString("findCar - Customer thread was interrupted.");
-                System.exit(1);;
+                System.exit(1);
             }
         }
         return replacementCars.poll();
@@ -108,25 +98,26 @@ public class Park implements CustomerPark {
     /**
      * Method for fetching the car after it has been repaired.
      */
-    public synchronized void collectCar() {
-        GenericIO.writelnString(">>>>> (Park) collectCar function");
-        Customer customer = ((Customer)Thread.currentThread());
-        customer.setCustomerState(Customer.State.PARK);
+    public synchronized void collectCar( int myCar ) {
         
-//        /**
-//         * If the list of repairedCards contains your car
-//         */
-//        if (repairedCars.contains(customer.getCar())){
-//            /**
-//             * Removes your car from the repaired list
-//             */
-//            repairedCars.remove(customer.getCar());
-//            /**
-//             * Upgrade your current car
-//             */
-//            customer.setCurrentCarID(customer.getCar());             
-//        }
+        /**
+         * If the list of repairedCards contains your car
+         */
+        if (repairedCars.contains(myCar)){
+            /**
+             * Removes your car from the repaired list
+             */
+            repairedCars.remove(myCar);            
+        }
 
+    }
+    /**
+     * 
+     * @return 
+     */
+    public synchronized void returnVehicle(int car) {
+        repairedCars.add(car);
+        repairedCars.forEach((x) -> {System.out.println("Inside Repaired Cars : "+x);});
     }
 
     /**
