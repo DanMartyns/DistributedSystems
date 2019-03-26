@@ -120,6 +120,7 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
     public synchronized boolean partAvailable(String piece, int car) {       
         
         if (piece.equals("0") && Constants.pieceA <= 1 || piece.equals("1") && Constants.pieceB <= 1 || piece.equals("2") && Constants.pieceC <= 1){
+            blockedServices.put(car, piece);
             return false;
         } else
             return true;

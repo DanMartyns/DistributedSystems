@@ -168,7 +168,7 @@ public class Manager extends Thread {
                     System.out.println("Manager "+choice[1]+" After register service");
                     System.out.println("Manager -----------------------------------");                    
                 }               
-                else if (customer[4].equals("1")) {                   
+                else if (customer[3].equals("0") && customer[4].equals("1")) {                   
                     lounge.receivePayment(choice[1]);    
                     System.out.println("Manager "+choice[1]+" After receive payment");
                     System.out.println("Manager -----------------------------------");                     

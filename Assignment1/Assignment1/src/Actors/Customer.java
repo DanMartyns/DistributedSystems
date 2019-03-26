@@ -165,7 +165,7 @@ public class Customer extends Thread {
                 logger.setCustomerState(id, Customer.State.PARK.toString());
                 System.out.println("Customer "+this.id+" after find car"); 
                 
-                outsideWorld.backToWorkByCar(this.id);
+                outsideWorld.backToWorkByCar(info);
                 setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);
                 logger.setCustomerState(id, Customer.State.NORMAL_LIFE_WITH_CAR.toString());
                 System.out.println("Customer "+this.id+" after back to work by car"); 

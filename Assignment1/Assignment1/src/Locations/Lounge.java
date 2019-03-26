@@ -242,7 +242,7 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
 
         alerting_customer.add(currentCar);
         notifyAll();
-        System.out.println("Alerting repaired car "+currentCar);
+        System.out.println("Mechanic Alerting repaired car "+currentCar);
     }
 
 }

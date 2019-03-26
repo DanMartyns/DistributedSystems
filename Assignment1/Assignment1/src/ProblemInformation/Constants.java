@@ -11,7 +11,7 @@ package ProblemInformation;
  */
 public class Constants {
 
-    public static final int NUM_CUSTOMERS = 30;
+    public static final int NUM_CUSTOMERS = 5;
     public static final int NUM_MECHANICS = 2;
     public static final int NUM_REP_VEH = 3;
     public static final int TYPE_PARTS = 3;
@@ -19,15 +19,15 @@ public class Constants {
     /**
      * number of A pieces
      */
-    public static int pieceA = 2;
+    public static int pieceA = 5;
     /**
      * number of B pieces
      */
-    public static int pieceB = 2;
+    public static int pieceB = 5;
     /**
      * number of C pieces
      */
-    public static int pieceC = 2;
+    public static int pieceC = 5;
     
     
     /*Using on Manager only*/

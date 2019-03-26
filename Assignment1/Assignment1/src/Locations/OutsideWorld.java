@@ -31,7 +31,7 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
      */
     private String currentCustomer = "";
     
-    private boolean[] atendidos = new boolean[NUM_CUSTOMERS];
+    private boolean[] carRepaired = new boolean[NUM_CUSTOMERS];
 
     public OutsideWorld(GeneralInformationRepo logger) {
         this.logger = logger;
@@ -54,8 +54,8 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
      * It waits to be notified that your car is repaired.
      */
     public synchronized void backToWorkByBus(int customer) {
-        System.out.println("Back To Work By Bus : atendidos ["+customer+"] = "+atendidos [customer]);        
-        while(atendidos [customer] == false){
+        System.out.println("Back To Work By Bus : carRepaired ["+customer+"] = "+carRepaired [customer]);        
+        while(carRepaired [customer] == false){
             try {
                 System.out.println("On Bus! waiting for my repaired car! sou o "+customer);                
                 wait();
@@ -64,8 +64,10 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
                 System.exit(1);                                        
             }
         }
+        System.out.println("After Back To Work By Bus : carRepaired ["+customer+"] = "+carRepaired [customer]); 
         System.out.println("Respondi! Sou o "+customer);
-        atendidos [customer] = false;
+        carRepaired [customer] = false;
+
     }
     /**
      * Synchronization point.
@@ -73,9 +75,12 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
      * or with a replacement car. If he is with a replacement car, 
      * he waits to be notified that his car is repaired.
      */
-    public synchronized void backToWorkByCar(int customer) {
-        System.out.println("Back to work by car : atendidos ["+customer+"] = "+atendidos [customer]);      
-        while(atendidos [customer] == false){
+    public synchronized void backToWorkByCar(String info) {
+        String[] inf = info.split(",");
+        int customer = Integer.parseInt(inf[0]);
+        
+        System.out.println("Back To Work by car : carRepaired ["+customer+"] = "+carRepaired [customer]);      
+        while(carRepaired [customer] == false){
             try {
                 System.out.println("With Car! waiting for my repaired car! sou o "+customer);
                 wait();
@@ -84,8 +89,8 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
                 System.exit(1);                                        
             }
         }
-        System.out.println("Respondi! Back to work by car !Sou o "+customer);
-        atendidos [customer] = false;
+        System.out.println("After Back To Work By Car : carRepaired ["+customer+"] = "+carRepaired [customer]); 
+        carRepaired [customer] = false;
 
     }
     /**
@@ -93,10 +98,10 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
      * Notifies customers that your car is repaired.
      */
     public synchronized void phoneCustomer(String info) {
-        System.out.println("Phone Customer : atendidos ["+(Integer.parseInt(info.split(",")[0]))+"] = "+atendidos [Integer.parseInt(info.split(",")[0])]);
-        atendidos [Integer.parseInt(info.split(",")[0])] = true;  
+        System.out.println("Phone Customer : carRepaired ["+(Integer.parseInt(info.split(",")[0]))+"] = "+carRepaired [Integer.parseInt(info.split(",")[0])]);
+        carRepaired [Integer.parseInt(info.split(",")[0])] = true;  
         notifyAll();
-        System.out.println("Phone Customer : atendidos ["+(Integer.parseInt(info.split(",")[0]))+"] = "+atendidos [Integer.parseInt(info.split(",")[0])]);        
+        System.out.println("Phone Customer : carRepaired ["+(Integer.parseInt(info.split(",")[0]))+"] = "+carRepaired [Integer.parseInt(info.split(",")[0])]);        
 
     }        
 }

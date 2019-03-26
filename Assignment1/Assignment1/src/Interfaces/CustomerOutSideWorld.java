@@ -23,7 +23,7 @@ public interface CustomerOutSideWorld {
      * he goes back to outside world activitys by replecement car
      * (Class OutsideWorld)
      */
-    void backToWorkByCar(int customer);
+    void backToWorkByCar(String customer);
     
     /**
      * if customer decide on repair car and choose not leaving with replecement car, 
