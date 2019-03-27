@@ -129,6 +129,7 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
         }
         System.out.println("Respondi! Sou o "+customer);
         clients [customer] = false;
+        logger.setNumberWaitingReplece(clients.length);
         notifyAll();
     }
     
@@ -139,6 +140,7 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      */
     public synchronized void handCarKey(String info) {
         clients [Integer.parseInt(info.split(",")[0])] = true;
+        
         notifyAll();
         
     }
@@ -231,7 +233,9 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
     public synchronized void letManagerKnow(String peca) {
 
         getting_new_parts.add(peca);
-        logger.setFlagPieces("true");
+        logger.setFlagAPieces(peca);
+        logger.setFlagBPieces(peca);
+        logger.setFlagCPieces(peca);
         notifyAll();
     }
     
@@ -241,6 +245,7 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
     public synchronized void repairConcluded(int currentCar) {
 
         alerting_customer.add(currentCar);
+
         notifyAll();
         System.out.println("Mechanic Alerting repaired car "+currentCar);
     }

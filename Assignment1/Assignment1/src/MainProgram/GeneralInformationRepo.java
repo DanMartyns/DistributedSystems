@@ -40,11 +40,11 @@ public class GeneralInformationRepo{
     
     private String[] ownCar = new String[NUM_CUSTOMERS];
     private String[] replecementCar = new String[NUM_CUSTOMERS];
-
+    private String[] repairedCar = new String[NUM_CUSTOMERS];
     
     private String valueQueueIn;
     
-    private int numberWaitingReplece;
+    private String numberWaitingReplece;
     
     private String numberRepair;
     
@@ -61,10 +61,14 @@ public class GeneralInformationRepo{
 
     private String pieces2Stored;
 
-    private String piecesAvabal;
+    private String piecesAAvabal;
+    private String piecesBAvabal;
+    private String piecesCAvabal;
 
-    private String flagPieces;
-
+    private String flagAPieces;
+    private String flagBPieces;
+    private String flagCPieces;
+    
     private String pieces0Manager;
     
     private String pieces1Manager;
@@ -84,10 +88,12 @@ public class GeneralInformationRepo{
         
         for(int i = 0; i<customerState.length; i++){
             
-            customerState[i] = "SNL";
+            customerState[i] = "NLC";
             ownCar[i] = "--";
             replecementCar[i] = "F";
             valueQueueIn = "00";
+            repairedCar[i]="F";
+            
             
         }
 
@@ -98,13 +104,20 @@ public class GeneralInformationRepo{
         numberRepair = "00";
         numberParkCars = "00";
         numberReplacementPark="00";
+        numberWaitingReplece = "00";
         numberServiceRequest = "00";
         
         pieces0Stored=""+Constants.pieceA;
         pieces1Stored=""+Constants.pieceB;
         pieces2Stored=""+Constants.pieceC;
-        piecesAvabal = "00";
-        flagPieces = "F";
+        
+        piecesAAvabal = "00";
+        piecesBAvabal = "00";
+        piecesCAvabal = "00";
+        
+        flagAPieces = "F";
+        flagBPieces = "F";
+        flagCPieces = "F";
         
         pieces0Manager ="00";
         pieces1Manager ="00";
@@ -163,15 +176,15 @@ public class GeneralInformationRepo{
             }
             
             for(int i = 0; i<customerState.length; i++){
-                bw.write("   "+customerState[i]+"  "+ownCar[i]+"  "+ replecementCar[i]+"   ");
+                bw.write("   "+customerState[i]+"  "+ownCar[i]+"  "+ replecementCar[i]+"   "+repairedCar[i]);
                 if((i+1)%10 == 0){
                     bw.newLine();
                     bw.write("            ");
                 }
                 
             }
-            bw.write("    "+valueQueueIn+"     "+numberRepair+"      "+numberParkCars+"   "+numberReplacementPark+"           "+numberServiceRequest+"      "+pieces0Stored+"    "+piecesAvabal
-                    +"   "+flagPieces+"    "+pieces1Stored+"   "+piecesAvabal+"   "+flagPieces+"    "+pieces2Stored+"   "+piecesAvabal+"    "+flagPieces+"                    "
+            bw.write("    "+valueQueueIn+"  "+numberWaitingReplece+"   "+numberRepair+"      "+numberParkCars+"   "+numberReplacementPark+"           "+numberServiceRequest+"      "+pieces0Stored+"    "+piecesAAvabal
+                    +"   "+flagAPieces+"    "+pieces1Stored+"   "+piecesBAvabal+"   "+flagBPieces+"    "+pieces2Stored+"   "+piecesCAvabal+"    "+flagCPieces+"                    "
                     +pieces0Manager+"    "+pieces1Manager+"    "+pieces2Manager);
             bw.newLine();
             bw.newLine();
@@ -267,7 +280,18 @@ public class GeneralInformationRepo{
     }
     
     /*TODO customer vehicle has already been repaired: T or F (# - 0 .. 29)*/
+    public synchronized void setAlreadyRepaired(int id, int repairedCar[]) {
+        //String[] inf = repairedCar.split(",");
+        if(repairedCar[id]==1){
+            this.repairedCar[id] = "T";
+        }
+        else{
+            this.repairedCar[id] = "F";
+        }
 
+        printHeaderLog();
+
+    }
     
     /**
      * number of customers presently queueing to talk to the manager
@@ -290,8 +314,15 @@ public class GeneralInformationRepo{
      * @param numberWaitingReplece number of replacement car
      */
     public synchronized void setNumberWaitingReplece(int numberWaitingReplece) {
-        this.numberWaitingReplece = numberWaitingReplece;
-        /**TODOOO*/
+        if(numberWaitingReplece<=9)
+        {
+            this.numberWaitingReplece = "0"+numberWaitingReplece;
+        }
+        else{
+           this.numberWaitingReplece = ""+numberWaitingReplece;
+        }
+        printHeaderLog();
+        
     }
     
     /**
@@ -398,13 +429,32 @@ public class GeneralInformationRepo{
      * number of customer vehicles waiting for part # to be available so that the repair may resume 
      * @param piecesAvabal
      */
-    public synchronized void setPiecesAvabal(int piecesAvabal) {
-        if(piecesAvabal<=9){
-            this.piecesAvabal = "0"+piecesAvabal;
+    public synchronized void setPiecesAvabal(String piecesAvabal) {
+        if(piecesAvabal.equals("0")){
+            if(Integer.parseInt(piecesAvabal)<=9){
+                this.piecesAAvabal = "0"+piecesAvabal;
+            }
+            else{
+                this.piecesAAvabal = ""+piecesAvabal;
+            }
         }
-        else{
-            this.piecesAvabal = ""+piecesAvabal;
+        else if(piecesAvabal.equals("1")){
+            if(Integer.parseInt(piecesAvabal)<=9){
+                this.piecesBAvabal = "0"+piecesAvabal;
+            }
+            else{
+                this.piecesBAvabal = ""+piecesAvabal;
+            }
         }
+        else if(piecesAvabal.equals("2")){
+            if(Integer.parseInt(piecesAvabal)<=9){
+                this.piecesCAvabal = "0"+piecesAvabal;
+            }
+            else{
+                this.piecesCAvabal = ""+piecesAvabal;
+            }
+        }
+        
         printHeaderLog();
     }
     
@@ -412,10 +462,41 @@ public class GeneralInformationRepo{
      * flag signaling the manager has been adviced that part # is missing at the repair area: T or F
      * @param flagPieces
      */
-    public synchronized void setFlagPieces(String flagPieces) {
-        if(flagPieces == "true"){
-            this.flagPieces = "T";
+    public synchronized void setFlagAPieces(String flagPieces) {
+        if(flagPieces.equals("0")){
+            this.flagAPieces = "T";
         }
+        
+        else{
+            this.flagAPieces = "F";
+           
+        }
+        
+        printHeaderLog();
+    }
+    
+    public synchronized void setFlagBPieces(String flagPieces) {
+        if(flagPieces.equals("1")){
+            this.flagBPieces = "T";
+        }
+        
+        else{
+            this.flagBPieces = "F";
+           
+        }
+        
+        printHeaderLog();
+    }
+    
+    public synchronized void setFlagCPieces(String flagPieces) {
+        if(flagPieces.equals("2")){
+            this.flagCPieces = "T";
+        }
+        else{
+            
+            this.flagCPieces = "F";
+        }
+        
         printHeaderLog();
     }
    

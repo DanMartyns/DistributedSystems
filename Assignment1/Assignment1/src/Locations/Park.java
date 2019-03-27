@@ -57,6 +57,8 @@ public class Park implements CustomerPark, MechanicsPark{
          */
         String[] inf = info.split(",");
         System.out.println("r"+replacementCars);
+        logger.setOwnCar(Integer.parseInt(inf[0]), info);
+        
         /**
          * If his current car is different from your car id => if ( currentCar != carId )
          * it means that the current car is a replacement car, he waits.
@@ -108,6 +110,8 @@ public class Park implements CustomerPark, MechanicsPark{
          * repairedCars[car] == 1    => car repaired
          * repairedCars[car] == -1   => car collected
          */
+        logger.setAlreadyRepaired(car, repairedCars);
+
         if (repairedCars[car] == 1){
             repairedCars[car] = -1;            
         }

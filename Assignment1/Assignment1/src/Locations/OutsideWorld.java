@@ -78,7 +78,8 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
     public synchronized void backToWorkByCar(String info) {
         String[] inf = info.split(",");
         int customer = Integer.parseInt(inf[0]);
-        
+        logger.setReplecementCar(Integer.parseInt(inf[0]), info);
+
         System.out.println("Back To Work by car : carRepaired ["+customer+"] = "+carRepaired [customer]);      
         while(carRepaired [customer] == false){
             try {

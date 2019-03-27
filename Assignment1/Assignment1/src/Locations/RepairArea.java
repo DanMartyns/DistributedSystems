@@ -118,7 +118,7 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
     * @return true or false, if mechanics has parts with him or not
     */
     public synchronized boolean partAvailable(String piece, int car) {       
-        
+        logger.setPiecesAvabal(piece);
         if (piece.equals("0") && Constants.pieceA <= 1 || piece.equals("1") && Constants.pieceB <= 1 || piece.equals("2") && Constants.pieceC <= 1){
             blockedServices.put(car, piece);
             return false;
