@@ -63,12 +63,18 @@ public class Park implements CustomerPark, MechanicsPark{
          * If his current car is different from your car id => if ( currentCar != carId )
          * it means that the current car is a replacement car, he waits.
          */
-        if ( inf[2].equals(inf[1]) == false ){ replacementCars.add(Integer.parseInt(inf[2])); notifyAll();}
+        if ( inf[2].equals(inf[1]) == false ){ 
+            replacementCars.add(Integer.parseInt(inf[2])); 
+            notifyAll();
+        }
         /**
          * If the car is repared and his current car is different from your car id, => if ( currentCar == carId )
          * it means that the current car is a replacement car, he wait.
          */        
-        else if ( inf[2].equals(inf[1]) ){ cars.add(Integer.parseInt(inf[1])); notifyAll();}
+        else if ( inf[2].equals(inf[1]) ){ 
+            cars.add(Integer.parseInt(inf[1])); 
+            notifyAll();
+        }
         
     }
 
