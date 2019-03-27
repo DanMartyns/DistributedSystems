@@ -98,8 +98,11 @@ public class Park implements CustomerPark, MechanicsPark{
                 CustomersInWait[id] = true;
                 wait = 0;
                 for(boolean x : CustomersInWait)
-                    if (x == true)
+                    if (x == true){
                         wait++;
+                        logger.setNumberWaitingReplece(wait);
+                    }
+                
                 wait();
             } catch (InterruptedException ex) {
                 GenericIO.writelnString("findCar - Customer thread was interrupted.");

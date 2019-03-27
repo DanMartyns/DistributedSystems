@@ -6,19 +6,10 @@
 package MainProgram;
 
 
-import Actors.Customer;
-import Actors.Manager;
-import Actors.Mechanic;
-import Locations.Lounge;
-import Locations.Park;
-import Locations.RepairArea;
-import Locations.SupplierSite;
 import ProblemInformation.Constants;
 import static ProblemInformation.Constants.NUM_CUSTOMERS;
 import static ProblemInformation.Constants.NUM_MECHANICS;
-import static ProblemInformation.Constants.NUM_REP_VEH;
 import genclass.GenericIO;
-import genclass.TextFile;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
