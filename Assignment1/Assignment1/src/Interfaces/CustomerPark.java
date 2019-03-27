@@ -28,5 +28,5 @@ public interface CustomerPark {
      * customer find the replecment car on park
      * (Class Park)
      */
-    int findCar();
+    int findCar(int id);
 }

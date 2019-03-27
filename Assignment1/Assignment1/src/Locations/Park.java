@@ -43,7 +43,8 @@ public class Park implements CustomerPark, MechanicsPark{
     public Park(GeneralInformationRepo logger) {
         this.logger = logger;
     }
-    private int CustomersInWait = 0;
+
+    private boolean[] CustomersInWait = new boolean[NUM_CUSTOMERS];
     
     /**
      * The customer park the car in the park.
@@ -86,7 +87,7 @@ public class Park implements CustomerPark, MechanicsPark{
      * Each customer will poll the list of replacement cars, and 
      * if there are no cars, they wait.
      */
-    public synchronized int findCar() {
+    public synchronized int findCar(int id) {
         
         /**
          * If the list of replacement car is not empty, he give a car to the customer.
@@ -97,15 +98,14 @@ public class Park implements CustomerPark, MechanicsPark{
                 /**
                  * If the list of replacement car is empty, he's wait for a car.
                  */
-                CustomersInWait++;
-                System.out.println("a espera de carro");
+                CustomersInWait[id] = true;
                 wait();
             } catch (InterruptedException ex) {
                 GenericIO.writelnString("findCar - Customer thread was interrupted.");
                 System.exit(1);
             }
         }
-        CustomersInWait--;
+        CustomersInWait[id] = false;
         notifyAll();
         return replacementCars.poll();
     }

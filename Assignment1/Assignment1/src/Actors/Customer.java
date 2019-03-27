@@ -158,7 +158,7 @@ public class Customer extends Thread {
                 logger.setCustomerState(id, Customer.State.WAITING_FOR_REPLACE_CAR.toString());
                 System.out.println("Customer "+this.id+" after collect key"); 
                 
-                int replacementCar = park.findCar();
+                int replacementCar = park.findCar(this.id);
                 setCurrentCar(info,""+replacementCar);
                 setCustomerState(Customer.State.PARK);
                 logger.setCustomerState(id, Customer.State.PARK.toString());
