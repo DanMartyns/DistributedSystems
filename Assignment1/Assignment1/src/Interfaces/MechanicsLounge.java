@@ -21,5 +21,10 @@ public interface MechanicsLounge {
     */
     void repairConcluded(int currentCar);
     
+    /**
+     * Check if a part order has already been ordered
+     * @param peca
+     * @return true or false
+     */
     boolean checkRequest(String peca);
 }

@@ -9,7 +9,6 @@ import Interfaces.ManagerRepairArea;
 import Interfaces.MechanicsRepairArea;
 import MainProgram.GeneralInformationRepo;
 import ProblemInformation.Constants;
-import genclass.GenericIO;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -46,15 +45,11 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
      * The mechanic remains in the "read paper" state, while the lists is empty. If not, continue
      */    
     public synchronized String readThePaper() {
-       
-        GenericIO.writelnString("Mechanic Lista de serviços : "+services);
-        GenericIO.writelnString("Mechanic Lista de serviços bloqueados : "+blockedServices);        
+            
         while ( blockedServices.isEmpty() && services.isEmpty() && shutdown == false ){
             try {
-                System.out.println("À espera de mais trabalho");
                 wait();
             } catch (InterruptedException ex) {
-                GenericIO.writelnString("readThePaper - Mechanic thread was interrupted.");
                 System.exit(1);
             }
         }
@@ -63,10 +58,9 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
             Map.Entry<Integer,String> entry = blockedServices.entrySet().iterator().next();
             int key = entry.getKey();
             String value = entry.getValue();
-            GenericIO.writelnString("Serviço bloqueado pego : "+key+", "+value);
             service = key+","+value;
             blockedServices.remove(key,value);
-            GenericIO.writelnString("Mechanic Lista de serviços bloqueados : "+blockedServices);     
+   
         } else {
             service = services.poll()+",-1";
         }
@@ -74,7 +68,6 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
             service = "end";
         }
        notifyAll();
-       System.out.println("read paper "+service);
        return service;
     }
     
@@ -88,8 +81,7 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
          * Register a service, means register the customer id
          * */
         services.add( customer );
-        logger.setNumberServiceRequest(services.size());
-        System.out.println("registos : "+services);         
+        logger.setNumberServiceRequest(services.size());       
         notifyAll();
     }
 
@@ -150,7 +142,6 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
     * Transitional State
     */
     public synchronized void fixIt() {
-        GenericIO.writelnString("Fixing the car");
     }
     
     /**
@@ -172,7 +163,6 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
             Constants.pieceC = Constants.pieceC + quantidade;
             logger.setPieces2Manager(Constants.pieceC);
         }
-        GenericIO.writelnString("Reposto : peca "+peca+", quantidade "+quantidade);
     }
     public synchronized void shutdownNow(){
         this.shutdown = true;

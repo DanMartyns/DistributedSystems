@@ -31,6 +31,9 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
      */
     private String currentCustomer = "";
     
+    /**
+     * Boolean array, index = carID, and the value = true or false. It means if the car of carID was repaired or not.
+     */
     private boolean[] carRepaired = new boolean[NUM_CUSTOMERS];
 
     public OutsideWorld(GeneralInformationRepo logger) {
@@ -44,7 +47,7 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
      * @return true or false, if he wants or not
      */
     public synchronized boolean decideOnRepair() {      
-        return true; //Math.random() > 0.5;
+        return Math.random() > 0.5;
 
     }
 
@@ -54,19 +57,16 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
      * It waits to be notified that your car is repaired.
      */
     public synchronized void backToWorkByBus(int customer) {
-        notifyAll();
-        System.out.println("Back To Work By Bus : carRepaired ["+customer+"] = "+carRepaired [customer]);        
+        notifyAll();     
         while(carRepaired [customer] == false){
-            try {
-                System.out.println("On Bus! waiting for my repaired car! sou o "+customer);                
+            try {              
                 wait();
             } catch (InterruptedException ex) {
                 GenericIO.writelnString("talkWithManager - One Customer thread was interrupted.");
                 System.exit(1);                                        
             }
         }
-        System.out.println("After Back To Work By Bus : carRepaired ["+customer+"] = "+carRepaired [customer]); 
-        System.out.println("Respondi! Sou o "+customer);
+
         carRepaired [customer] = false;
         notifyAll();
 
@@ -83,18 +83,15 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
         String[] inf = info.split(",");
         int customer = Integer.parseInt(inf[0]);
         logger.setReplecementCar(Integer.parseInt(inf[0]), info);
-
-        System.out.println("Back To Work by car : carRepaired ["+customer+"] = "+carRepaired [customer]);      
+ 
         while(carRepaired [customer] == false){
             try {
-                System.out.println("With Car! waiting for my repaired car! sou o "+customer);
                 wait();
             } catch (InterruptedException ex) {
                 GenericIO.writelnString("talkWithManager - One Customer thread was interrupted.");
                 System.exit(1);                                        
             }
         }
-        System.out.println("After Back To Work By Car : carRepaired ["+customer+"] = "+carRepaired [customer]); 
         carRepaired [customer] = false;
         
 
@@ -104,10 +101,7 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
      * Notifies customers that your car is repaired.
      */
     public synchronized void phoneCustomer(String info) {
-        System.out.println("Phone Customer : carRepaired ["+(Integer.parseInt(info.split(",")[0]))+"] = "+carRepaired [Integer.parseInt(info.split(",")[0])]);
         carRepaired [Integer.parseInt(info.split(",")[0])] = true;  
-        notifyAll();
-        System.out.println("Phone Customer : carRepaired ["+(Integer.parseInt(info.split(",")[0]))+"] = "+carRepaired [Integer.parseInt(info.split(",")[0])]);        
-
+        notifyAll();      
     }        
 }

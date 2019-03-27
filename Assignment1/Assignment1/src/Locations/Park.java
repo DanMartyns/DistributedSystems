@@ -28,7 +28,7 @@ public class Park implements CustomerPark, MechanicsPark{
     /**
      * Replacement Car Kit
      */
-    private Queue<Integer> replacementCars = new LinkedList<Integer>() {{add(-1); add(-2); add(-3); add(-4); }};
+    private Queue<Integer> replacementCars = new LinkedList<Integer>() {{add(-1); }};
     
     /**
      * Set of parked cars
@@ -44,7 +44,7 @@ public class Park implements CustomerPark, MechanicsPark{
         this.logger = logger;
     }
 
-    private boolean[] CustomersInWait = new boolean[NUM_CUSTOMERS];
+    private boolean []CustomersInWait = new boolean[NUM_CUSTOMERS];
     
     /**
      * The customer park the car in the park.
@@ -58,15 +58,12 @@ public class Park implements CustomerPark, MechanicsPark{
          *      id.carId.currentCar.wantsCar.wantsToPay
          */
         String[] inf = info.split(",");
-        GenericIO.writelnString("Customer "+inf[0]+" GO TO REPAIR SHOP");
         logger.setOwnCar(Integer.parseInt(inf[0]), info);
         
         /**
          * If his current car is different from your car id => if ( currentCar != carId )
          * it means that the current car is a replacement car, he waits.
          */
-        GenericIO.writelnString("Customer INF[2] :"+inf[2]);
-        GenericIO.writelnString("Customer INF[1] : "+inf[1]);
         if ( !inf[2].equals(inf[1])){ 
             replacementCars.add(Integer.parseInt(inf[2])); 
             notifyAll();
@@ -92,20 +89,25 @@ public class Park implements CustomerPark, MechanicsPark{
         /**
          * If the list of replacement car is not empty, he give a car to the customer.
         */
-
+        int wait = 0;
         while (replacementCars.isEmpty() ){
             try {
                 /**
                  * If the list of replacement car is empty, he's wait for a car.
                  */
                 CustomersInWait[id] = true;
+                wait = 0;
+                for(boolean x : CustomersInWait)
+                    if (x == true)
+                        wait++;
                 wait();
             } catch (InterruptedException ex) {
                 GenericIO.writelnString("findCar - Customer thread was interrupted.");
                 System.exit(1);
             }
         }
-        CustomersInWait[id] = false;
+             
+        CustomersInWait[id] = false;          
         notifyAll();
         return replacementCars.poll();
     }

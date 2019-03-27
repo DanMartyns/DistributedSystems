@@ -84,9 +84,6 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      */
     public synchronized String appraiseSit() {
         assert(!atending_customer.isEmpty() || !alerting_customer.isEmpty() || !getting_new_parts.isEmpty()); 
-        GenericIO.writelnString("Manager Fila de Atendimento : "+atending_customer);
-        GenericIO.writelnString("Manager Fila de Alertas : "+alerting_customer);
-        GenericIO.writelnString("Manager Fila de pedidos de peças : "+getting_new_parts);
         
         return (!getting_new_parts.isEmpty() ? GETTING_NEW_PARTS+"@"+getting_new_parts.poll() : ( !alerting_customer.isEmpty() ? ALERTING_CUSTOMER+"@"+alerting_customer.poll() : ATENDING_CUSTOMER+"@"+atending_customer.poll() ));
         
@@ -100,7 +97,6 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
         
         atending_customer.add(id);       
         logger.setValueQueueIn(atending_customer.size());
-        GenericIO.writelnString("fila de atendimento : "+atending_customer);
         notifyAll();
     }
     /**
@@ -112,19 +108,13 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
 
         while(clients [customer] == false){
             try {
-                GenericIO.writelnString("collect key - Customer "+customer+" está em espera");
-                System.out.println("collect key - Eu customer "+customer+" à espera das chaves do manager. array de booleanos "+Arrays.toString(clients));
                 wait();
 
             } catch (InterruptedException ex) {
-                GenericIO.writelnString("talkWithManager - One Customer thread was interrupted.");
                 System.exit(1);                                        
             }
-        }
-        System.out.println("collect key - Respondi! Sou o "+customer);
-        GenericIO.writelnString("Rasto - Antes de colocar o collect key a false "+customer);        
-        clients [customer] = false;
-        GenericIO.writelnString("Rasto - Depois de colocar o collect key a false "+customer);        
+        }      
+        clients [customer] = false;     
         logger.setNumberWaitingReplece(clients.length);
         notifyAll();
     }
@@ -139,18 +129,11 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
         while(clients [id] == true){
             try {
                 wait();
-
             } catch (InterruptedException ex) {
-                GenericIO.writelnString("talkWithManager - One Customer thread was interrupted.");
                 System.exit(1);                                        
             }
-        }        
-        System.out.println("collect key - INFORMATION "+info);
-        System.out.println("collect key - Vou dar a chaves ao "+info.split(",")[0]);
-        GenericIO.writelnString("Rasto - Antes de colocar o handCarKey a true "+info);        
-        clients [Integer.parseInt(info.split(",")[0])] = true; 
-        System.out.println("collect key - array de booleanos "+Arrays.toString(clients));
-        GenericIO.writelnString("Rasto - Depois de colocar o handCarKey a true "+info);        
+        }               
+        clients [Integer.parseInt(info.split(",")[0])] = true;      
         notifyAll();
         
     }
@@ -177,11 +160,8 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
                 System.exit(1);                                        
             }
         }
-        
-        GenericIO.writelnString("Rasto - Antes de colocar o talk a true "+customer);
         clients [Integer.parseInt(customer.split(",")[0])] = true;
-        notifyAll();
-        GenericIO.writelnString("Rasto - Depois de colocar o talk a true "+customer);        
+        notifyAll();        
 
 
 
@@ -210,11 +190,8 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
                 GenericIO.writelnString("talkWithManager - One Customer thread was interrupted.");
                 System.exit(1);                                        
             }
-        }
-        System.out.println("Respondi! Sou o "+customer);
-        GenericIO.writelnString("Rasto - Antes de colocar o talk a false "+customer);        
+        }        
         clients [customer] = false;
-        GenericIO.writelnString("Rasto - Depois de colocar o talk a false "+customer);
         notifyAll();
     }
     
@@ -233,8 +210,7 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
                 GenericIO.writelnString("talkWithManager - One Customer thread was interrupted.");
                 System.exit(1);                                        
             }
-        }        
-        System.out.println("Manager vai receber o pagamento do "+info);        
+        }                
         clients [Integer.parseInt(info.split(",")[0])] = true;
         notifyAll();
 
@@ -253,7 +229,6 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
                 System.exit(1);                                        
             }
         }
-        System.out.println("Respondi! Sou o "+customer);
         clients [customer] = false;
         notifyAll();
         
@@ -269,7 +244,6 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
         logger.setFlagAPieces(peca);
         logger.setFlagBPieces(peca);
         logger.setFlagCPieces(peca);
-        GenericIO.writelnString("Mechanic getting new parts => "+peca);
         notifyAll();
     }
     
@@ -281,7 +255,6 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
         alerting_customer.add(currentCar);
 
         notifyAll();
-        System.out.println("Mechanic Alerting repaired car "+currentCar);
     }
     public synchronized boolean checkRequest(String peca){
         return getting_new_parts.contains(peca) ? false : true;

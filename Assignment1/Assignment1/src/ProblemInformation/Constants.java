@@ -19,15 +19,15 @@ public class Constants {
     /**
      * number of A pieces
      */
-    public static int pieceA = 0;
+    public static int pieceA = 5;
     /**
      * number of B pieces
      */
-    public static int pieceB = 0;
+    public static int pieceB = 5;
     /**
      * number of C pieces
      */
-    public static int pieceC = 0;
+    public static int pieceC = 5;
     
     
     /*Using on Manager only*/

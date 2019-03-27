@@ -132,9 +132,7 @@ public class Customer extends Thread {
     @Override
     public void run() {
         while ( outsideWorld.decideOnRepair() == false){
-            System.out.println("Customer não quer consertar");
         }
-            System.out.println("Customer quer consertar");
             setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);
             logger.setCustomerState(id, Customer.State.NORMAL_LIFE_WITH_CAR.toString()); 
             
@@ -142,62 +140,53 @@ public class Customer extends Thread {
             setCustomerState(Customer.State.PARK);
             logger.setCustomerState(id, Customer.State.PARK.toString());
             setCurrentCar(info,""+NUM_CUSTOMERS); // CurrentCar change to NUM_CUSTOMERS, that means without car
-            System.out.println("Customer "+this.id+" after go to repair shop"); 
             
             lounge.queueIn(info);
             setCustomerState(Customer.State.RECEPTION);
-            logger.setCustomerState(id, Customer.State.RECEPTION.toString());
-            System.out.println("Customer "+this.id+" after queue in");             
+            logger.setCustomerState(id, Customer.State.RECEPTION.toString());           
 
             lounge.talkWithManager(this.id);
-            System.out.println("Customer "+this.id+" after talk to manager"); 
+ 
             if(wantsReplacementCar){
 
                 lounge.collectKey(this.id);
                 setCustomerState(Customer.State.WAITING_FOR_REPLACE_CAR);
                 logger.setCustomerState(id, Customer.State.WAITING_FOR_REPLACE_CAR.toString());
-                System.out.println("Customer "+this.id+" after collect key"); 
+
                 
                 int replacementCar = park.findCar(this.id);
                 setCurrentCar(info,""+replacementCar);
                 setCustomerState(Customer.State.PARK);
                 logger.setCustomerState(id, Customer.State.PARK.toString());
-                System.out.println("Customer "+this.id+" after find car"); 
+ 
                 
                 outsideWorld.backToWorkByCar(info);
                 setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);
                 logger.setCustomerState(id, Customer.State.NORMAL_LIFE_WITH_CAR.toString());
-                System.out.println("Customer "+this.id+" after back to work by car"); 
                 
                 park.goToRepairShop(info);
                 setCustomerState(Customer.State.PARK);
                 logger.setCustomerState(id, Customer.State.PARK.toString());
-                System.out.println("Customer "+this.id+" after go to repair shop");
                 setCurrentCar(info,""+NUM_CUSTOMERS);
             }
             else {
                 outsideWorld.backToWorkByBus(this.id);
                 setCustomerState(Customer.State.NORMAL_LIFE_WITHOUT_CAR);
                 logger.setCustomerState(id, Customer.State.NORMAL_LIFE_WITHOUT_CAR.toString());
-                System.out.println("Customer "+this.id+" after back to work by bus"); 
             }
             setPay(info,"1");
             lounge.queueIn(info);
             setCustomerState(Customer.State.RECEPTION);
             logger.setCustomerState(id, Customer.State.RECEPTION.toString());
-            System.out.println("Customer "+this.id+" after queue in 2"); 
             
-            lounge.payForTheService(this.id);
-            System.out.println("Customer "+this.id+" after pay the service"); 
+            lounge.payForTheService(this.id); 
             
             park.collectCar(this.id);
             setCustomerState(Customer.State.PARK);
             logger.setCustomerState(id, Customer.State.PARK.toString());
-            System.out.println("Customer "+this.id+" after collect the car"); 
             
             setCurrentCar(info,""+this.id);
-            
-            System.out.println("Customer "+this.id+" -------------------------------------------");             
+                      
     }
     
     /**

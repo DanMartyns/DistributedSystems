@@ -14,7 +14,6 @@ import static ProblemInformation.Constants.ALERTING_CUSTOMER;
 import static ProblemInformation.Constants.ATENDING_CUSTOMER;
 import static ProblemInformation.Constants.GETTING_NEW_PARTS;
 import static ProblemInformation.Constants.NUM_CUSTOMERS;
-import genclass.GenericIO;
 import java.util.Arrays;
 
 /**
@@ -136,47 +135,40 @@ public class Manager extends Thread {
         while(lounge.getNextTask()){            
             setManagerState(State.CHECKING_WHAT_TO_DO);
             logger.setManagerState(State.CHECKING_WHAT_TO_DO.toString());
-            System.out.println("Manager After getNextTask");
 
-            String[] choice = lounge.appraiseSit().split("@");
-            System.out.println("choice "+Arrays.toString(choice));
-            System.out.println("Manager "+choice[1]+" After apraiseSit");            
+            String[] choice = lounge.appraiseSit().split("@");           
              
 
             if(choice[0].equals(ATENDING_CUSTOMER)){
                 String[] customer = choice[1].split(",");
                 lounge.talkToCustomer(choice[1]);
-                System.out.println("Manager "+choice[1]+" After talk");                
+           
                 setManagerState(State.ATTENDING_CUSTOMER);
                 logger.setManagerState(State.ATTENDING_CUSTOMER.toString());
-                 System.out.println(Arrays.toString(customer));
+
               
                 if(customer[3].equals("0") && customer[4].equals("0")){
                     repairArea.registerService( Integer.parseInt( customer[1] ) ); //Updated Status : Posting Job
-                    System.out.println("Manager "+choice[1]+" After register service");                    
+                  
                     setManagerState(State.POSTING_JOB);
                     logger.setManagerState(State.POSTING_JOB.toString());
-                    System.out.println("Manager ----------------------------------");                    
+                   
                 
                 }
                 else if (customer[3].equals("1") && customer[4].equals("0")){               
                     lounge.handCarKey(choice[1]);
-                    System.out.println("Manager After hand car key");
+
                     repairArea.registerService( Integer.parseInt( customer[1] ) ); //Updated Status : Posting Job
                     setManagerState(State.POSTING_JOB);
-                    //logger.setManagerState(State.POSTING_JOB.toString());
-                    System.out.println("Manager "+choice[1]+" After register service");
-                    System.out.println("Manager -----------------------------------");                    
+                    logger.setManagerState(State.POSTING_JOB.toString());
+                  
                 }               
                 else if (customer[4].equals("1")) {                   
-                    lounge.receivePayment(choice[1]);    
-                    System.out.println("Manager "+choice[1]+" After receive payment");
-                    System.out.println("Manager -----------------------------------");                     
+                    lounge.receivePayment(choice[1]);                       
                     
                     numRepairedClients++;
-                    System.out.println("Manager => Número de Clientes "+numRepairedClients);
+
                     if( numRepairedClients == NUM_CUSTOMERS){
-                        System.out.println("Mandei o mecânico embora");
                         repairArea.shutdownNow();
                         break;
                     }                    
@@ -185,10 +177,10 @@ public class Manager extends Thread {
             }  
             else if(choice[0].equals(ALERTING_CUSTOMER)){
                 outsideWorld.phoneCustomer(choice[1]);
-                System.out.println("Manager After phoneCustomer");                
+              
                 setManagerState(State.ALERTING_CUSTOMER);
                 logger.setManagerState(State.ALERTING_CUSTOMER.toString());
-                System.out.println("Manager -----------------------------------");                    
+                    
             
             } 
             
@@ -197,12 +189,11 @@ public class Manager extends Thread {
                 int quantidade = supplierSite.goToSupplier(choice[1]);
                 setManagerState(State.GETTING_NEW_PARTS);
                 logger.setManagerState(State.GETTING_NEW_PARTS.toString());             
-                System.out.println("Manager After go to supplier");
-                System.out.println("Manager repos a peca "+choice[1]+" e quantidade "+quantidade);
+
                 repairArea.storePart(choice[1], quantidade); //Updated Status : Replenish Stock
                 setManagerState(State.REPLENISH_STOCK);
                 logger.setManagerState(State.REPLENISH_STOCK.toString());
-                System.out.println("Manager After store part");                
+             
             }           
            
         }
