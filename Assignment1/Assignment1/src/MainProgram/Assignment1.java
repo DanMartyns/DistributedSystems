@@ -62,32 +62,29 @@ public class Assignment1 {
          * Start of Simulation.
          */    
        
-        for(int i = 0; i<NUM_CUSTOMERS; i++)
+        for(int i = 0; i<NUM_CUSTOMERS; i++){
             thread_customer[i] = new Customer(i, outsideWorld, i, park, lounge, logger);
-        
+            thread_customer[i].start();
+        }
                
         Manager thread_manager = new Manager(0, lounge,  supplierSite, repairArea,outsideWorld, logger);
-        
-        for(int i=0; i<NUM_MECHANICS; i++)
+        thread_manager.start();        
+        for(int i=0; i<NUM_MECHANICS; i++){
             thread_mechanic[i] = new Mechanic(i, lounge, repairArea,  park, logger);
-        
+            thread_mechanic[i].start();
+        }
         
         logger.printHeaderLog();
 
-        thread_manager.start();        
-        for(Mechanic m : thread_mechanic) 
-            m.start();
-        for(Customer c : thread_customer){
-            c.start();              
-        }        
+           
         
         /**
          * Wait for the end of simulation.
          */       
         
-        for (Customer customer : thread_customer) {
+        for (int i = 0; i<NUM_CUSTOMERS; i++) {
             try{
-                customer.join();
+                thread_customer[i].join();
                 GenericIO.writelnString("Customer is dead!");
 
             }
@@ -96,9 +93,9 @@ public class Assignment1 {
                 System.exit(1);
             }
         }
-        for (Mechanic mechanic : thread_mechanic) {
+        for (int i=0; i<NUM_MECHANICS; i++) {
             try{
-                mechanic.join();
+                thread_mechanic[i].join();
                 GenericIO.writelnString("Mechanic is dead!");
 
             }

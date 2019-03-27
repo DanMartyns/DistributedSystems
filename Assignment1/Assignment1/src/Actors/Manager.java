@@ -203,8 +203,9 @@ public class Manager extends Thread {
                 logger.setManagerState(State.REPLENISH_STOCK.toString());
                 System.out.println("Manager After store part");                
             }           
-       
+           
         }
+        
     }
     /**
      * Get the Manager state

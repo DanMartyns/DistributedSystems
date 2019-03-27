@@ -54,6 +54,7 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
      * It waits to be notified that your car is repaired.
      */
     public synchronized void backToWorkByBus(int customer) {
+        notifyAll();
         System.out.println("Back To Work By Bus : carRepaired ["+customer+"] = "+carRepaired [customer]);        
         while(carRepaired [customer] == false){
             try {
@@ -67,6 +68,8 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
         System.out.println("After Back To Work By Bus : carRepaired ["+customer+"] = "+carRepaired [customer]); 
         System.out.println("Respondi! Sou o "+customer);
         carRepaired [customer] = false;
+        notifyAll();
+
 
     }
     /**
@@ -76,6 +79,7 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
      * he waits to be notified that his car is repaired.
      */
     public synchronized void backToWorkByCar(String info) {
+        notifyAll();
         String[] inf = info.split(",");
         int customer = Integer.parseInt(inf[0]);
         logger.setReplecementCar(Integer.parseInt(inf[0]), info);
@@ -92,6 +96,7 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
         }
         System.out.println("After Back To Work By Car : carRepaired ["+customer+"] = "+carRepaired [customer]); 
         carRepaired [customer] = false;
+        
 
     }
     /**

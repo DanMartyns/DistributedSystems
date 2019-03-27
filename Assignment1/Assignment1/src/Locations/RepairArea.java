@@ -46,7 +46,7 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
      * The mechanic remains in the "read paper" state, while the lists is empty. If not, continue
      */    
     public synchronized String readThePaper() {
-        
+       
         GenericIO.writelnString("Mechanic Lista de serviços : "+services);
         GenericIO.writelnString("Mechanic Lista de serviços bloqueados : "+blockedServices);        
         while ( blockedServices.isEmpty() && services.isEmpty() && shutdown == false ){
