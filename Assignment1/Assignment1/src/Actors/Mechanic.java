@@ -151,7 +151,8 @@ public class Mechanic extends Thread {
             else {
 
                 park.blockVehicle(currentVehicle);
-                lounge.letManagerKnow(currentPiece);
+                if (lounge.checkRequest(currentPiece))
+                    lounge.letManagerKnow(currentPiece);
                 setMechanicState(Mechanic.State.ALERTING_MANAGER);
                 logger.setMechanicState(id, Mechanic.State.ALERTING_MANAGER.toString());
           

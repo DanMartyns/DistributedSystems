@@ -168,7 +168,7 @@ public class Manager extends Thread {
                     System.out.println("Manager "+choice[1]+" After register service");
                     System.out.println("Manager -----------------------------------");                    
                 }               
-                else if (customer[3].equals("0") && customer[4].equals("1")) {                   
+                else if (customer[4].equals("1")) {                   
                     lounge.receivePayment(choice[1]);    
                     System.out.println("Manager "+choice[1]+" After receive payment");
                     System.out.println("Manager -----------------------------------");                     
@@ -197,7 +197,8 @@ public class Manager extends Thread {
                 int quantidade = supplierSite.goToSupplier(choice[1]);
                 setManagerState(State.GETTING_NEW_PARTS);
                 logger.setManagerState(State.GETTING_NEW_PARTS.toString());             
-                System.out.println("Manager After go to supplier");                
+                System.out.println("Manager After go to supplier");
+                System.out.println("Manager repos a peca "+choice[1]+" e quantidade "+quantidade);
                 repairArea.storePart(choice[1], quantidade); //Updated Status : Replenish Stock
                 setManagerState(State.REPLENISH_STOCK);
                 logger.setManagerState(State.REPLENISH_STOCK.toString());

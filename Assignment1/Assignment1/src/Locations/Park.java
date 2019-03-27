@@ -43,6 +43,7 @@ public class Park implements CustomerPark, MechanicsPark{
     public Park(GeneralInformationRepo logger) {
         this.logger = logger;
     }
+    private int CustomersInWait = 0;
     
     /**
      * The customer park the car in the park.
@@ -56,14 +57,16 @@ public class Park implements CustomerPark, MechanicsPark{
          *      id.carId.currentCar.wantsCar.wantsToPay
          */
         String[] inf = info.split(",");
-        System.out.println("r"+replacementCars);
+        GenericIO.writelnString("Customer "+inf[0]+" GO TO REPAIR SHOP");
         logger.setOwnCar(Integer.parseInt(inf[0]), info);
         
         /**
          * If his current car is different from your car id => if ( currentCar != carId )
          * it means that the current car is a replacement car, he waits.
          */
-        if ( inf[2].equals(inf[1]) == false ){ 
+        GenericIO.writelnString("Customer INF[2] :"+inf[2]);
+        GenericIO.writelnString("Customer INF[1] : "+inf[1]);
+        if ( !inf[2].equals(inf[1])){ 
             replacementCars.add(Integer.parseInt(inf[2])); 
             notifyAll();
         }
@@ -88,11 +91,13 @@ public class Park implements CustomerPark, MechanicsPark{
         /**
          * If the list of replacement car is not empty, he give a car to the customer.
         */
+
         while (replacementCars.isEmpty() ){
             try {
                 /**
                  * If the list of replacement car is empty, he's wait for a car.
                  */
+                CustomersInWait++;
                 System.out.println("a espera de carro");
                 wait();
             } catch (InterruptedException ex) {
@@ -100,6 +105,7 @@ public class Park implements CustomerPark, MechanicsPark{
                 System.exit(1);
             }
         }
+        CustomersInWait--;
         notifyAll();
         return replacementCars.poll();
     }

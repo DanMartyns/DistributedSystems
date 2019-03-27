@@ -21,4 +21,5 @@ public interface MechanicsLounge {
     */
     void repairConcluded(int currentCar);
     
+    boolean checkRequest(String peca);
 }

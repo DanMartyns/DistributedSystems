@@ -172,7 +172,8 @@ public class Customer extends Thread {
                 park.goToRepairShop(info);
                 setCustomerState(Customer.State.PARK);
                 logger.setCustomerState(id, Customer.State.PARK.toString());
-                System.out.println("Customer "+this.id+" after go to repair shop");                 
+                System.out.println("Customer "+this.id+" after go to repair shop");
+                setCurrentCar(info,""+NUM_CUSTOMERS);
             }
             else {
                 outsideWorld.backToWorkByBus(this.id);
@@ -184,7 +185,7 @@ public class Customer extends Thread {
             lounge.queueIn(info);
             setCustomerState(Customer.State.RECEPTION);
             logger.setCustomerState(id, Customer.State.RECEPTION.toString());
-            System.out.println("Customer "+this.id+" after queue in"); 
+            System.out.println("Customer "+this.id+" after queue in 2"); 
             
             lounge.payForTheService(this.id);
             System.out.println("Customer "+this.id+" after pay the service"); 

@@ -28,37 +28,25 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      * Queue dedicated the service "ATENDING CUSTOMER".
      */
     Queue<String> atending_customer = new LinkedList<>();
+    
     /**
      * Queue dedicated the service "ALERTING CUSTOMER".
      */    
     Queue<Integer> alerting_customer = new LinkedList<Integer>();
+    
     /**
      * Queue dedicated the service "GETING NEW PARTS".
      */    
     Queue<String> getting_new_parts = new LinkedList<>();
-
-    private boolean[] clients = new boolean[NUM_CUSTOMERS];
     
     public Lounge(GeneralInformationRepo logger) {
         this.logger = logger;
     }
     /******************************************************************************************
-     *                              Synchronization Variables
+     *                              Synchronization Array
      *****************************************************************************************/
-    /**
-     * Boolean variable "talk" to ensure a conversation between manager and client.
-     */
-    private boolean talk = false;
-    
-    /**
-     * Boolean variable "talk2" to ensure a conversation between manager and client, about the exchange of keys.
-     */    
-    private boolean key = false;
-    
-    /**
-     * Boolean variable "pay" to guarantee the payment of the service.
-     */
-    private boolean pay = false;
+
+     private boolean[] clients = new boolean[NUM_CUSTOMERS];   
     
     /******************************************************************************************
      *
@@ -95,7 +83,11 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      * @return 0,1 or 2, which means the service number
      */
     public synchronized String appraiseSit() {
-        assert(!atending_customer.isEmpty() || !alerting_customer.isEmpty() || !getting_new_parts.isEmpty());        
+        assert(!atending_customer.isEmpty() || !alerting_customer.isEmpty() || !getting_new_parts.isEmpty()); 
+        GenericIO.writelnString("Manager Fila de Atendimento : "+atending_customer);
+        GenericIO.writelnString("Manager Fila de Alertas : "+alerting_customer);
+        GenericIO.writelnString("Manager Fila de pedidos de peças : "+getting_new_parts);
+        
         return (!getting_new_parts.isEmpty() ? GETTING_NEW_PARTS+"@"+getting_new_parts.poll() : ( !alerting_customer.isEmpty() ? ALERTING_CUSTOMER+"@"+alerting_customer.poll() : ATENDING_CUSTOMER+"@"+atending_customer.poll() ));
         
         
@@ -120,6 +112,8 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
 
         while(clients [customer] == false){
             try {
+                GenericIO.writelnString("collect key - Customer "+customer+" está em espera");
+                System.out.println("collect key - Eu customer "+customer+" à espera das chaves do manager. array de booleanos "+Arrays.toString(clients));
                 wait();
 
             } catch (InterruptedException ex) {
@@ -127,8 +121,10 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
                 System.exit(1);                                        
             }
         }
-        System.out.println("Respondi! Sou o "+customer);
+        System.out.println("collect key - Respondi! Sou o "+customer);
+        GenericIO.writelnString("Rasto - Antes de colocar o collect key a false "+customer);        
         clients [customer] = false;
+        GenericIO.writelnString("Rasto - Depois de colocar o collect key a false "+customer);        
         logger.setNumberWaitingReplece(clients.length);
         notifyAll();
     }
@@ -139,8 +135,22 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      * In practical terms, synchronization will only be done using the key variable.
      */
     public synchronized void handCarKey(String info) {
-        clients [Integer.parseInt(info.split(",")[0])] = true;
-        
+        int id = Integer.parseInt(info.split(",")[0]);
+        while(clients [id] == true){
+            try {
+                wait();
+
+            } catch (InterruptedException ex) {
+                GenericIO.writelnString("talkWithManager - One Customer thread was interrupted.");
+                System.exit(1);                                        
+            }
+        }        
+        System.out.println("collect key - INFORMATION "+info);
+        System.out.println("collect key - Vou dar a chaves ao "+info.split(",")[0]);
+        GenericIO.writelnString("Rasto - Antes de colocar o handCarKey a true "+info);        
+        clients [Integer.parseInt(info.split(",")[0])] = true; 
+        System.out.println("collect key - array de booleanos "+Arrays.toString(clients));
+        GenericIO.writelnString("Rasto - Depois de colocar o handCarKey a true "+info);        
         notifyAll();
         
     }
@@ -157,9 +167,21 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
         /**
          * The manager starts a conversation by putting the "talk" variable to true
          */
+        int id = Integer.parseInt(customer.split(",")[0]);
+        while(clients [id] == true){
+            try {
+                wait();
+
+            } catch (InterruptedException ex) {
+                GenericIO.writelnString("talkWithManager - One Customer thread was interrupted.");
+                System.exit(1);                                        
+            }
+        }
+        
+        GenericIO.writelnString("Rasto - Antes de colocar o talk a true "+customer);
         clients [Integer.parseInt(customer.split(",")[0])] = true;
         notifyAll();
-        
+        GenericIO.writelnString("Rasto - Depois de colocar o talk a true "+customer);        
 
 
 
@@ -190,7 +212,9 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
             }
         }
         System.out.println("Respondi! Sou o "+customer);
+        GenericIO.writelnString("Rasto - Antes de colocar o talk a false "+customer);        
         clients [customer] = false;
+        GenericIO.writelnString("Rasto - Depois de colocar o talk a false "+customer);
         notifyAll();
     }
     
@@ -200,6 +224,16 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      * meaning the collection of the payment.
      */
     public synchronized void receivePayment(String info) {
+        int id = Integer.parseInt(info.split(",")[0]);
+        while(clients [id] == true){
+            try {
+                wait();
+
+            } catch (InterruptedException ex) {
+                GenericIO.writelnString("talkWithManager - One Customer thread was interrupted.");
+                System.exit(1);                                        
+            }
+        }        
         System.out.println("Manager vai receber o pagamento do "+info);        
         clients [Integer.parseInt(info.split(",")[0])] = true;
         notifyAll();
@@ -214,7 +248,6 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
         while(clients [customer] == false){
             try {
                 wait();
-
             } catch (InterruptedException ex) {
                 GenericIO.writelnString("talkWithManager - One Customer thread was interrupted.");
                 System.exit(1);                                        
@@ -236,6 +269,7 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
         logger.setFlagAPieces(peca);
         logger.setFlagBPieces(peca);
         logger.setFlagCPieces(peca);
+        GenericIO.writelnString("Mechanic getting new parts => "+peca);
         notifyAll();
     }
     
@@ -249,5 +283,7 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
         notifyAll();
         System.out.println("Mechanic Alerting repaired car "+currentCar);
     }
-
+    public synchronized boolean checkRequest(String peca){
+        return getting_new_parts.contains(peca) ? false : true;
+    }
 }

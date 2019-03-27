@@ -60,10 +60,13 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
         }
         String service;        
         if (!blockedServices.isEmpty()){
-            int key = Integer.parseInt( blockedServices.get(blockedServices.keySet().toArray()[0]) ) ;
-            String value = (String) blockedServices.values().toArray()[0];
+            Map.Entry<Integer,String> entry = blockedServices.entrySet().iterator().next();
+            int key = entry.getKey();
+            String value = entry.getValue();
+            GenericIO.writelnString("Serviço bloqueado pego : "+key+", "+value);
             service = key+","+value;
             blockedServices.remove(key,value);
+            GenericIO.writelnString("Mechanic Lista de serviços bloqueados : "+blockedServices);     
         } else {
             service = services.poll()+",-1";
         }
@@ -169,6 +172,7 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
             Constants.pieceC = Constants.pieceC + quantidade;
             logger.setPieces2Manager(Constants.pieceC);
         }
+        GenericIO.writelnString("Reposto : peca "+peca+", quantidade "+quantidade);
     }
     public synchronized void shutdownNow(){
         this.shutdown = true;
