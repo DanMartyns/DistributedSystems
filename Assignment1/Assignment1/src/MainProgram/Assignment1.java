@@ -7,6 +7,16 @@ package MainProgram;
 import Actors.Customer;
 import Actors.Manager;
 import Actors.Mechanic;
+import Interfaces.CustomerLounge;
+import Interfaces.CustomerOutSideWorld;
+import Interfaces.CustomerPark;
+import Interfaces.ManagerLounge;
+import Interfaces.ManagerOutsideWorld;
+import Interfaces.ManagerRepairArea;
+import Interfaces.ManagerSupplierSite;
+import Interfaces.MechanicsLounge;
+import Interfaces.MechanicsPark;
+import Interfaces.MechanicsRepairArea;
 import Locations.Lounge;
 import Locations.OutsideWorld;
 import Locations.Park;
@@ -56,14 +66,14 @@ public class Assignment1 {
          */    
        
         for(int i = 0; i<NUM_CUSTOMERS; i++){
-            thread_customer[i] = new Customer(i, outsideWorld, i, park, lounge, logger);
+            thread_customer[i] = new Customer(i, (CustomerOutSideWorld) outsideWorld, i, (CustomerPark) park, (CustomerLounge) lounge, logger);
             thread_customer[i].start();
         }
                
-        Manager thread_manager = new Manager(0, lounge,  supplierSite, repairArea,outsideWorld, logger);
+        Manager thread_manager = new Manager(0, (ManagerLounge) lounge, (ManagerSupplierSite) supplierSite, (ManagerRepairArea) repairArea, (ManagerOutsideWorld) outsideWorld, logger);
         thread_manager.start();        
         for(int i=0; i<NUM_MECHANICS; i++){
-            thread_mechanic[i] = new Mechanic(i, lounge, repairArea,  park, logger);
+            thread_mechanic[i] = new Mechanic(i, (MechanicsLounge) lounge, (MechanicsRepairArea) repairArea, (MechanicsPark)  park, logger);
             thread_mechanic[i].start();
         }
         
