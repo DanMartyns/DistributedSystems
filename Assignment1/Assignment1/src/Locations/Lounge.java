@@ -58,7 +58,8 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
       * As soon as they are not, they perform a task.
       * @return true, when the vectores are not empty
       */
-    public synchronized boolean getNextTask() {              
+    public synchronized boolean getNextTask(String managerState) {
+        logger.setManagerState(managerState);
         while(atending_customer.isEmpty() && alerting_customer.isEmpty() && getting_new_parts.isEmpty()){ 
             try {
                 wait();
@@ -93,8 +94,9 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
     /**
      * The costumer go into the Lounge and waits for his turn
      */
-    public synchronized void queueIn(String id) {
-        
+    public synchronized void queueIn(String id, String customerState) {
+        int customer = Integer.parseInt(id.split(",")[0]);
+        logger.setCustomerState(customer, customerState);
         atending_customer.add(id);       
         logger.setValueQueueIn(atending_customer.size());
         notifyAll();
@@ -104,8 +106,8 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      * In theoretical terms, you will receive the key to the replacement car.
      * In practical terms, synchronization will only be done using the key variable.
      */
-    public synchronized void collectKey(int customer) {    
-
+    public synchronized void collectKey(int customer, String customerState) {    
+        logger.setCustomerState(customer, customerState);
         while(clients [customer] == false){
             try {
                 wait();
@@ -145,11 +147,12 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
      * before talking to another client.
      * Remove this customer from the service queue.
      */
-    public synchronized void talkToCustomer(String customer) {
+    public synchronized void talkToCustomer(String customer, String managerState) {
 
         /**
          * The manager starts a conversation by putting the "talk" variable to true
          */
+        logger.setManagerState(managerState);
         int id = Integer.parseInt(customer.split(",")[0]);
         while(clients [id] == true){
             try {
@@ -238,8 +241,8 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
     /*
     * Let manager know that the mechanics needs more pieces from supplier site
     */
-    public synchronized void letManagerKnow(String peca) {
-
+    public synchronized void letManagerKnow(String peca, int mechanic, String mechanicState) {
+        logger.setMechanicState(mechanic, mechanicState);
         getting_new_parts.add(peca);
         logger.setFlagAPieces(peca);
         logger.setFlagBPieces(peca);
@@ -250,10 +253,10 @@ public class Lounge implements CustomerLounge, ManagerLounge, MechanicsLounge {
     /*
     * Notify the repair is concluded
     */
-    public synchronized void repairConcluded(int currentCar) {
+    public synchronized void repairConcluded(int currentCar, int mechanic, String mechanicState) {
 
+        logger.setMechanicState(mechanic, mechanicState);
         alerting_customer.add(currentCar);
-
         notifyAll();
     }
     public synchronized boolean checkRequest(String peca){

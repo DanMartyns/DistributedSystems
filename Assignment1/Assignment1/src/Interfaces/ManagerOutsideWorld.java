@@ -14,5 +14,5 @@ public interface ManagerOutsideWorld {
     /**
      * Call the Customer (Outside World)
      */
-    public void phoneCustomer(String id);        
+    public void phoneCustomer(String id, String managerState);        
 }

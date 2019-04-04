@@ -48,6 +48,9 @@ public class Assignment1 {
         Customer[] thread_customer = new Customer[NUM_CUSTOMERS];
         Mechanic[] thread_mechanic = new Mechanic[NUM_MECHANICS];
         
+        
+        logger.printHeaderLog();        
+        
         /** 
          * Start of Simulation.
          */    
@@ -63,10 +66,6 @@ public class Assignment1 {
             thread_mechanic[i] = new Mechanic(i, lounge, repairArea,  park, logger);
             thread_mechanic[i].start();
         }
-        
-        logger.printHeaderLog();
-
-           
         
         /**
          * Wait for the end of simulation.

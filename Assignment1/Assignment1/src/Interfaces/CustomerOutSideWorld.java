@@ -16,21 +16,21 @@ public interface CustomerOutSideWorld {
      * (Class OutsideWorld)
      * @return true if customer decide Repair the car, false if they still on outside world activity
      */
-    boolean decideOnRepair();
+    boolean decideOnRepair(int customer, String customerState);
     
     /**
      * if customer decide on repair car and choose leave with replecement car, 
      * he goes back to outside world activitys by replecement car
      * (Class OutsideWorld)
      */
-    void backToWorkByCar(String customer);
+    void backToWorkByCar(String customer, String customerState);
     
     /**
      * if customer decide on repair car and choose not leaving with replecement car, 
      * he goes back to outside world activitys by replecement bus
      * (Class OutsideWorld)
      */
-    void backToWorkByBus(int customer);
+    void backToWorkByBus(int customer, String customerState);
     
     
     

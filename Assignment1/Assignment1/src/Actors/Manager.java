@@ -14,7 +14,6 @@ import static ProblemInformation.Constants.ALERTING_CUSTOMER;
 import static ProblemInformation.Constants.ATENDING_CUSTOMER;
 import static ProblemInformation.Constants.GETTING_NEW_PARTS;
 import static ProblemInformation.Constants.NUM_CUSTOMERS;
-import java.util.Arrays;
 
 /**
  * @author giselapinto
@@ -129,75 +128,38 @@ public class Manager extends Thread {
     @Override
     public void run(){
         
-        setManagerState(State.CHECKING_WHAT_TO_DO);
-        logger.setManagerState(State.CHECKING_WHAT_TO_DO.toString());
-        
-        while(lounge.getNextTask()){            
-            setManagerState(State.CHECKING_WHAT_TO_DO);
-            logger.setManagerState(State.CHECKING_WHAT_TO_DO.toString());
-
-            String[] choice = lounge.appraiseSit().split("@");           
-             
+        while(lounge.getNextTask(State.CHECKING_WHAT_TO_DO.toString())){            
+            String[] choice = lounge.appraiseSit().split("@"); 
 
             if(choice[0].equals(ATENDING_CUSTOMER)){
                 String[] customer = choice[1].split(",");
-                lounge.talkToCustomer(choice[1]);
-           
-                setManagerState(State.ATTENDING_CUSTOMER);
-                logger.setManagerState(State.ATTENDING_CUSTOMER.toString());
+                lounge.talkToCustomer(choice[1], State.ATTENDING_CUSTOMER.toString());
 
-              
                 if(customer[3].equals("0") && customer[4].equals("0")){
-                    repairArea.registerService( Integer.parseInt( customer[1] ) ); //Updated Status : Posting Job
-                  
-                    setManagerState(State.POSTING_JOB);
-                    logger.setManagerState(State.POSTING_JOB.toString());
-                   
-                
+                    repairArea.registerService( Integer.parseInt( customer[1] ) , State.POSTING_JOB.toString() );
                 }
                 else if (customer[3].equals("1") && customer[4].equals("0")){               
                     lounge.handCarKey(choice[1]);
-
-                    repairArea.registerService( Integer.parseInt( customer[1] ) ); //Updated Status : Posting Job
-                    setManagerState(State.POSTING_JOB);
-                    logger.setManagerState(State.POSTING_JOB.toString());
-                  
+                    repairArea.registerService( Integer.parseInt( customer[1] ) , State.POSTING_JOB.toString() );
                 }               
                 else if (customer[4].equals("1")) {                   
                     lounge.receivePayment(choice[1]);                       
-                    
                     numRepairedClients++;
 
                     if( numRepairedClients == NUM_CUSTOMERS){
-                        repairArea.shutdownNow();
-                        break;
+                        repairArea.shutdownNow(State.CHECKING_WHAT_TO_DO.toString());               
+                        break;    
                     }                    
                 }
-            
             }  
             else if(choice[0].equals(ALERTING_CUSTOMER)){
-                outsideWorld.phoneCustomer(choice[1]);
-              
-                setManagerState(State.ALERTING_CUSTOMER);
-                logger.setManagerState(State.ALERTING_CUSTOMER.toString());
-                    
-            
-            } 
-            
+                outsideWorld.phoneCustomer(choice[1], State.ALERTING_CUSTOMER.toString());            
+            }    
             else if (choice[0].equals(GETTING_NEW_PARTS)){    
-
-                int quantidade = supplierSite.goToSupplier(choice[1]);
-                setManagerState(State.GETTING_NEW_PARTS);
-                logger.setManagerState(State.GETTING_NEW_PARTS.toString());             
-
-                repairArea.storePart(choice[1], quantidade); //Updated Status : Replenish Stock
-                setManagerState(State.REPLENISH_STOCK);
-                logger.setManagerState(State.REPLENISH_STOCK.toString());
-             
-            }           
-           
+                int quantidade = supplierSite.goToSupplier(choice[1], State.GETTING_NEW_PARTS.toString());
+                repairArea.storePart(choice[1], quantidade, State.REPLENISH_STOCK.toString());
+            }                  
         }
-        
     }
     /**
      * Get the Manager state

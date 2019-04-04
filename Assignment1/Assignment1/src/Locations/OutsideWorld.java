@@ -46,7 +46,8 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
      * Decide whether to get the car or not.
      * @return true or false, if he wants or not
      */
-    public synchronized boolean decideOnRepair() {      
+    public synchronized boolean decideOnRepair(int customer, String customerState) {
+        logger.setCustomerState(customer, customerState);
         return Math.random() > 0.5;
 
     }
@@ -56,7 +57,8 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
      * Get back to your normal life without a car. 
      * It waits to be notified that your car is repaired.
      */
-    public synchronized void backToWorkByBus(int customer) {
+    public synchronized void backToWorkByBus(int customer, String customerState) {
+        logger.setCustomerState(customer, customerState);    
         notifyAll();     
         while(carRepaired [customer] == false){
             try {              
@@ -78,12 +80,13 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
      * or with a replacement car. If he is with a replacement car, 
      * he waits to be notified that his car is repaired.
      */
-    public synchronized void backToWorkByCar(String info) {
+    public synchronized void backToWorkByCar(String info, String customerState) {
+        
         notifyAll();
         String[] inf = info.split(",");
         int customer = Integer.parseInt(inf[0]);
         logger.setReplecementCar(Integer.parseInt(inf[0]), info);
- 
+        logger.setCustomerState(customer, customerState);
         while(carRepaired [customer] == false){
             try {
                 wait();
@@ -100,7 +103,8 @@ public class OutsideWorld implements ManagerOutsideWorld, CustomerOutSideWorld {
      * Synchronization point.
      * Notifies customers that your car is repaired.
      */
-    public synchronized void phoneCustomer(String info) {
+    public synchronized void phoneCustomer(String info, String managerState) {
+        logger.setManagerState(managerState);
         carRepaired [Integer.parseInt(info.split(",")[0])] = true;  
         notifyAll();      
     }        

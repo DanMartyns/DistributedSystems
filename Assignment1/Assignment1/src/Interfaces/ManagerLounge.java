@@ -14,7 +14,7 @@ public interface ManagerLounge {
      * Get a new Task for the Manager (Lounge)
      * @return boolean 
      */
-    public boolean getNextTask();
+    public boolean getNextTask(String managerState);
     
     /**
      * Choose what is the new task (Lounge)
@@ -25,7 +25,7 @@ public interface ManagerLounge {
     /**
      * Talk to Customer (Lounge)
      */
-    public void talkToCustomer(String info);
+    public void talkToCustomer(String info, String managerState);
     
     /**
      * Receive Payment (Lounge)

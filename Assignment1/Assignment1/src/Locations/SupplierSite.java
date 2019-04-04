@@ -32,7 +32,8 @@ public class SupplierSite implements ManagerSupplierSite {
      * @param peca
      * @return random number of parts of a part type.
      */
-    public synchronized int goToSupplier(String peca) {
+    public synchronized int goToSupplier(String peca, String managerState) {
+        logger.setManagerState(managerState);
         int min = 1;
         int max = 9;
         int range = max - min + 1;

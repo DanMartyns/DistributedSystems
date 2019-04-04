@@ -15,7 +15,7 @@ public interface MechanicsRepairArea {
      * when mechanics have a service to do, he starts the repair procedure
      * (Class RepairArea)
     */
-    void startRepairProcedure();
+    void startRepairProcedure(int mechanic, String mechanicState);
     
  
     /**
@@ -28,7 +28,7 @@ public interface MechanicsRepairArea {
      * If mechanics need a part, he goes to his supplier to get the required part
      * (Class RepairArea)
      */
-    String getRequiredPart();
+    String getRequiredPart(int mechanic, String mechanicState);
     
     /**
      * Mechanics check if the part is available on his supplier
@@ -41,12 +41,12 @@ public interface MechanicsRepairArea {
      * if he has the part on his supplier he continues to finish repair procedure
      * (Class RepairArea)
      */
-    void resumeRepairProcedure(String piece);
+    void resumeRepairProcedure(String piece,int mechanic, String mechanicState);
     
     /**
      * Mechanics waits for service, reading the paper
      * (Class RepairArea)
      */
-    String readThePaper();   
+    String readThePaper(int mechanic, String mechanicState);   
  
 }

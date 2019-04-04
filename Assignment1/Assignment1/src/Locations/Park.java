@@ -49,15 +49,16 @@ public class Park implements CustomerPark, MechanicsPark{
     /**
      * The customer park the car in the park.
      * In this state you can get in, 
-     * -> customers who will repair a car, 
-     * -> customers who will get the car after repair and who has a replacement car.
+     * customers who will repair a car, 
+     * customers who will get the car after repair and who has a replacement car.
      */
-    public synchronized void goToRepairShop(String info) {        
+    public synchronized void goToRepairShop(String info, String customerState) {
         /**
          * Content of info :
          *      id.carId.currentCar.wantsCar.wantsToPay
          */
         String[] inf = info.split(",");
+        logger.setCustomerState(Integer.parseInt(inf[0]), customerState);
         logger.setOwnCar(Integer.parseInt(inf[0]), info);
         
         /**
@@ -84,8 +85,8 @@ public class Park implements CustomerPark, MechanicsPark{
      * Each customer will poll the list of replacement cars, and 
      * if there are no cars, they wait.
      */
-    public synchronized int findCar(int id) {
-        
+    public synchronized int findCar(int id, String customerState) {
+        logger.setCustomerState(id, customerState);
         /**
          * If the list of replacement car is not empty, he give a car to the customer.
         */
@@ -119,7 +120,7 @@ public class Park implements CustomerPark, MechanicsPark{
      * Method to signal when a car is repaired, signaling the position 
      * with the index equal to the car id, with a value of 1.
      */
-    public synchronized void collectCar( int car ) {
+    public synchronized void collectCar( int car , String customerState ) {
         
         /**
          * If the list of repairedCards contains your car
@@ -127,6 +128,7 @@ public class Park implements CustomerPark, MechanicsPark{
          * repairedCars[car] == 1    => car repaired
          * repairedCars[car] == -1   => car collected
          */
+        logger.setCustomerState(car, customerState);
         logger.setAlreadyRepaired(car, repairedCars);
 
         if (repairedCars[car] == 1){

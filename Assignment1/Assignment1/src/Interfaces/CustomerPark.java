@@ -15,18 +15,18 @@ public interface CustomerPark {
      * Customer collects the car that is already done
      * (Class Park)
      */
-    void collectCar(int myCar);
+    void collectCar(int myCar, String customerState);
     
     
     /**
      * customer go to repair shop
      * (Class Park)
      */
-    void goToRepairShop(String info);
+    void goToRepairShop(String info, String customerState);
     
     /**
      * customer find the replecment car on park
      * (Class Park)
      */
-    int findCar(int id);
+    int findCar(int id, String customerState);
 }

@@ -5,6 +5,7 @@
  */
 package Locations;
 
+import Actors.Mechanic;
 import Interfaces.ManagerRepairArea;
 import Interfaces.MechanicsRepairArea;
 import MainProgram.GeneralInformationRepo;
@@ -44,8 +45,10 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
     /**
      * The mechanic remains in the "read paper" state, while the lists is empty. If not, continue
      */    
-    public synchronized String readThePaper() {
-            
+    public synchronized String readThePaper(int mechanic, String mechanicState) {
+        
+        logger.setMechanicState(mechanic, mechanicState);   
+        
         while ( blockedServices.isEmpty() && services.isEmpty() && shutdown == false ){
             try {
                 wait();
@@ -75,12 +78,13 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
      * The manager records the repair of a car. 
      * @param customer 
      */
-    public synchronized void registerService(int customer) {
+    public synchronized void registerService(int customer, String managerState) {
       
         /**
          * Register a service, means register the customer id
          * */
         services.add( customer );
+        logger.setManagerState(managerState);
         logger.setNumberServiceRequest(services.size());       
         notifyAll();
     }
@@ -89,14 +93,16 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
      * In terms of simulation, indicates the service to be done
      * Transition state
      */
-    public synchronized void startRepairProcedure() {
+    public synchronized void startRepairProcedure(int mechanic, String mechanicState) {
+        logger.setMechanicState(mechanic,mechanicState);
     }
 
     /*
     * Theoretically the mechanic will find out which part is missing from the car
     * A random value is generated to indicate the part missing from the car
     */
-    public synchronized String getRequiredPart() {       
+    public synchronized String getRequiredPart(int mechanic, String mechanicState) {       
+        logger.setMechanicState(mechanic, mechanicState);        
         /**
           * 0 - piece A
           * 1 - piece B
@@ -123,7 +129,8 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
     /*
     * Decreases the number of pieces after verifying that they have
     */
-    public synchronized void resumeRepairProcedure(String piece) {
+    public synchronized void resumeRepairProcedure(String piece, int mechanic, String mechanicState) {
+        logger.setMechanicState(mechanic, mechanicState); 
         logger.setPieces0Stored(Constants.pieceA);
         logger.setPieces1Stored(Constants.pieceB);
         logger.setPieces2Stored(Constants.pieceC);
@@ -149,7 +156,8 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
      * @param peca
      * @param quantidade 
      */
-    public synchronized void storePart(String peca, int quantidade) {  
+    public synchronized void storePart(String peca, int quantidade, String managerState) {
+        logger.setManagerState(managerState);
         if ( peca.equals("0") ){
             Constants.pieceA = Constants.pieceA + quantidade;
             logger.setPieces0Manager(Constants.pieceA);
@@ -164,7 +172,8 @@ public class RepairArea implements ManagerRepairArea, MechanicsRepairArea {
             logger.setPieces2Manager(Constants.pieceC);
         }
     }
-    public synchronized void shutdownNow(){
+    public synchronized void shutdownNow(String managerState){
+        logger.setManagerState(managerState);
         this.shutdown = true;
         notifyAll();
     }

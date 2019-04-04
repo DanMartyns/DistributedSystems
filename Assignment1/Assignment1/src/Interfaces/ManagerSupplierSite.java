@@ -15,7 +15,7 @@ public interface ManagerSupplierSite {
     /**
      * Go to Supplier (SupplierSite)
      */
-    public int goToSupplier(String peca);
+    public int goToSupplier(String peca, String managerState);
     
     
 }

@@ -10,7 +10,6 @@ import Interfaces.CustomerOutSideWorld;
 import Interfaces.CustomerPark;
 import MainProgram.GeneralInformationRepo;
 import static ProblemInformation.Constants.NUM_CUSTOMERS;
-import genclass.GenericIO;
 
 /**
  * @author giselapinto
@@ -63,10 +62,6 @@ public class Customer extends Thread {
     private int id;
     
     private String info;
-    /**
-     * State of the Customer.
-     */    
-    private State state;
     
     /**
     * interface Customer Park.
@@ -97,7 +92,7 @@ public class Customer extends Thread {
     
     /**
      * Mechanic constructor
-     * 
+     *
      * @param id identifier of the customer
      * @param outsideWorld instance of the outside world
      * @param carID
@@ -121,7 +116,6 @@ public class Customer extends Thread {
         
         this.id = id;
         this.info = id+","+carID+","+carID+","+(wantsReplacementCar ? 1 : 0)+","+"0";
-        this.state = State.NORMAL_LIFE_WITH_CAR;
         this.outsideWorld = outsideWorld;
         this.park = park;
         this.lounge = lounge;
@@ -131,61 +125,37 @@ public class Customer extends Thread {
     
     @Override
     public void run() {
-        while ( outsideWorld.decideOnRepair() == false){
+        while ( outsideWorld.decideOnRepair(id,Customer.State.NORMAL_LIFE_WITH_CAR.toString()) == false){}                         
+        
+        park.goToRepairShop(info,Customer.State.PARK.toString());
+        setCurrentCar(info,""+NUM_CUSTOMERS); // CurrentCar change to NUM_CUSTOMERS, that means without car
+
+        lounge.queueIn(info, Customer.State.RECEPTION.toString());       
+
+        lounge.talkWithManager(this.id);
+
+        if(wantsReplacementCar){
+
+            lounge.collectKey(this.id,Customer.State.WAITING_FOR_REPLACE_CAR.toString());
+
+            int replacementCar = park.findCar(this.id,Customer.State.PARK.toString());
+            setCurrentCar(info,""+replacementCar);
+
+            outsideWorld.backToWorkByCar(info, Customer.State.NORMAL_LIFE_WITH_CAR.toString());
+
+            park.goToRepairShop(info,Customer.State.PARK.toString());
+            setCurrentCar(info,""+NUM_CUSTOMERS);
         }
-            setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);
-            logger.setCustomerState(id, Customer.State.NORMAL_LIFE_WITH_CAR.toString()); 
-            
-            park.goToRepairShop(info);
-            setCustomerState(Customer.State.PARK);
-            logger.setCustomerState(id, Customer.State.PARK.toString());
-            setCurrentCar(info,""+NUM_CUSTOMERS); // CurrentCar change to NUM_CUSTOMERS, that means without car
-            
-            lounge.queueIn(info);
-            setCustomerState(Customer.State.RECEPTION);
-            logger.setCustomerState(id, Customer.State.RECEPTION.toString());           
+        else {
+            outsideWorld.backToWorkByBus(this.id, Customer.State.NORMAL_LIFE_WITHOUT_CAR.toString());
+        }
+        setPay(info,"1");
+        lounge.queueIn(info, Customer.State.RECEPTION.toString());
 
-            lounge.talkWithManager(this.id);
- 
-            if(wantsReplacementCar){
+        lounge.payForTheService(this.id); 
 
-                lounge.collectKey(this.id);
-                setCustomerState(Customer.State.WAITING_FOR_REPLACE_CAR);
-                logger.setCustomerState(id, Customer.State.WAITING_FOR_REPLACE_CAR.toString());
-
-                
-                int replacementCar = park.findCar(this.id);
-                setCurrentCar(info,""+replacementCar);
-                setCustomerState(Customer.State.PARK);
-                logger.setCustomerState(id, Customer.State.PARK.toString());
- 
-                
-                outsideWorld.backToWorkByCar(info);
-                setCustomerState(Customer.State.NORMAL_LIFE_WITH_CAR);
-                logger.setCustomerState(id, Customer.State.NORMAL_LIFE_WITH_CAR.toString());
-                
-                park.goToRepairShop(info);
-                setCustomerState(Customer.State.PARK);
-                logger.setCustomerState(id, Customer.State.PARK.toString());
-                setCurrentCar(info,""+NUM_CUSTOMERS);
-            }
-            else {
-                outsideWorld.backToWorkByBus(this.id);
-                setCustomerState(Customer.State.NORMAL_LIFE_WITHOUT_CAR);
-                logger.setCustomerState(id, Customer.State.NORMAL_LIFE_WITHOUT_CAR.toString());
-            }
-            setPay(info,"1");
-            lounge.queueIn(info);
-            setCustomerState(Customer.State.RECEPTION);
-            logger.setCustomerState(id, Customer.State.RECEPTION.toString());
-            
-            lounge.payForTheService(this.id); 
-            
-            park.collectCar(this.id);
-            setCustomerState(Customer.State.PARK);
-            logger.setCustomerState(id, Customer.State.PARK.toString());
-            
-            setCurrentCar(info,""+this.id);
+        park.collectCar(this.id, Customer.State.PARK.toString());
+        setCurrentCar(info,""+this.id);
                       
     }
     
@@ -195,22 +165,6 @@ public class Customer extends Thread {
      */
     public int getID(){
         return id;
-    }
-    
-    /**
-     * Get the Customer's State
-     * 
-     * @return customer state
-     */
-    public State getCustomerState(){
-        return this.state;
-    }
-    /**
-     * Set the Customer's State
-     * @param state customer state
-     */
-    public void setCustomerState(State state){
-        this.state = state;
     }
     
     private void setCurrentCar(String id, String value){

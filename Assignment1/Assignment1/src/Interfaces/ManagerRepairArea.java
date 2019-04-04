@@ -13,15 +13,15 @@ public interface ManagerRepairArea {
     /**
      * Register a Service (RepairArea)
      */
-    public void registerService(int customer);  
+    public void registerService(int customer, String managerState);  
     
     /**
      * Replace the pieces (RepairArea)
      */
-    public void storePart(String peca, int quantidade);
+    public void storePart(String peca, int quantidade, String managerState);
     
     /**
      * Role responsible for telling mechanics that work is over (RepairArea)
      */
-    public void shutdownNow();
+    public void shutdownNow(String managerState);
 }

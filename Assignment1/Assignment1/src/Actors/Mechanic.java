@@ -106,53 +106,34 @@ public class Mechanic extends Thread {
     
     @Override
     public void run() {
-        while((currentService = repairArea.readThePaper()).equals("end") == false ){
+        setMechanicState(Mechanic.State.WAITING_FOR_WORK);
+        logger.setMechanicState(id, Mechanic.State.WAITING_FOR_WORK.toString());
+        
+        while((currentService = repairArea.readThePaper(id, Mechanic.State.WAITING_FOR_WORK.toString())).equals("end") == false ){
            
             setMechanicState(Mechanic.State.WAITING_FOR_WORK);
-            logger.setMechanicState(id, Mechanic.State.WAITING_FOR_WORK.toString());
                        
-            repairArea.startRepairProcedure();
+            repairArea.startRepairProcedure(id, Mechanic.State.FIXING_CAR.toString());
             currentVehicle = Integer.parseInt(currentService.split(",")[0]);
             currentPiece = currentService.split(",")[1];
-
-            setMechanicState( Mechanic.State.FIXING_CAR);
-            logger.setMechanicState(id,Mechanic.State.FIXING_CAR.toString());
             
             park.getVehicle(currentVehicle);           
 
             if (currentPiece.equals("-1")){
-                currentPiece = repairArea.getRequiredPart();
-                setMechanicState(Mechanic.State.CHECKING_STOCK);
-                logger.setMechanicState(id, Mechanic.State.CHECKING_STOCK.toString());
-             
+                currentPiece = repairArea.getRequiredPart(id,Mechanic.State.CHECKING_STOCK.toString());  
             }        
 
             if (repairArea.partAvailable(currentPiece, currentVehicle)){
               
-                repairArea.resumeRepairProcedure(currentPiece);
-          
-                setMechanicState(Mechanic.State.FIXING_CAR);
-                logger.setMechanicState(id, Mechanic.State.FIXING_CAR.toString()); 
-               
-                repairArea.fixIt();           
-           
+                repairArea.resumeRepairProcedure(currentPiece, id, Mechanic.State.FIXING_CAR.toString());  
+                repairArea.fixIt();                      
                 park.returnVehicle(currentVehicle);
-
-                lounge.repairConcluded(currentVehicle);
-          
-                setMechanicState(Mechanic.State.ALERTING_MANAGER);
-                logger.setMechanicState(id, Mechanic.State.ALERTING_MANAGER.toString());
-               
+                lounge.repairConcluded(currentVehicle, id, Mechanic.State.ALERTING_MANAGER.toString());               
             }
-
             else {
-
                 park.blockVehicle(currentVehicle);
                 if (lounge.checkRequest(currentPiece))
-                    lounge.letManagerKnow(currentPiece);
-                setMechanicState(Mechanic.State.ALERTING_MANAGER);
-                logger.setMechanicState(id, Mechanic.State.ALERTING_MANAGER.toString());
-          
+                    lounge.letManagerKnow(currentPiece, id, Mechanic.State.ALERTING_MANAGER.toString());                          
             }
        }   
     }
